@@ -1,0 +1,47 @@
+---
+name: KINDRED HOSPITAL BREA
+abbrev: KINB
+category: LTAC
+meanPop: 28.15068492972603
+meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+comments: Dropped unpopulated entry for KINDRED HOSPITAL SANTA ANA
+meanLOSICU:
+    enddate: 12/31/2007
+    prov: email Sarah Bartsch 6/9/2015
+    startdate: 1/1/2007
+    value: 0.0
+meanLOS:
+    prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $C
+    value: 28.94366197
+fracAdultPatientDaysICU: 0.0
+fracAdultPatientDaysICU_prov: email Sarah Bartsch 6/9/2015
+address: 875 N Brea Blvd, Brea, CA 92821
+address_prov: google
+latitude: 33.9339571
+longitude: -117.8940523
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 440
+totalTransfersIn:
+    prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+    value: 146
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 437
+-   category: HOSPITAL
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 18
+-   category: LTAC
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 0
+losModel:
+    parms:
+    - 3.1940098527
+    - 0.6518322301
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp&NH)_Inputs_Adult_2007_v03_06APR2012_KFW.xlsx:1_LOS

@@ -1,0 +1,44 @@
+---
+name: HOAG MEMORIAL HOSPITAL PRESBYTERIAN
+abbrev: HOAG
+category: HOSPITAL
+meanPop: 358.2712328429863
+meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+meanLOSICU:
+    prov: Mean of known values from ICU Estimated LOS 7-22-09
+    value: 7.7
+meanLOS:
+    prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $C
+    value: 4.88253743
+fracAdultPatientDaysICU: 0.108
+fracAdultPatientDaysICU_prov: Mean of known values from ICU Estimated LOS 7-22-09
+address: One Hoag Drive, Newport Beach CA, 92663
+address_prov: google then http://www.healthgrades.com/hospital-directory/california-ca-anaheim-santa-ana/hoag-memorial-hospital-presbyterian-hgstc6518d46050224
+latitude: 33.6220091
+longitude: -117.9313419
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 33001
+totalTransfersIn:
+    prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+    value: 791
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 2480.5242881072
+-   category: HOSPITAL
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 81
+-   category: LTAC
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 9
+losModel:
+    parms:
+    - 1.3741212547
+    - 0.6020255606
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp&NH)_Inputs_Adult_2007_v03_06APR2012_KFW.xlsx:1_LOS

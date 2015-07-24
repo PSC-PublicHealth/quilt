@@ -1,0 +1,19 @@
+---
+name: CHILDREN'S HOSPITAL OF ORANGE COUNTY
+abbrev: CHOC
+category: HOSPITAL
+nBeds: null
+nBeds_prov: null
+meanLOSICU:
+    prov: Mean of known values from ICU Estimated LOS 7-22-09
+    value: 7.7
+fracAdultPatientDaysICU: 0.33
+fracAdultPatientDaysICU_prov: ICU Estimated LOS 7-22-09.xls $B
+address: 1201 W La Veta Ave, Orange, CA
+address_prov: google, then www.choc.org - main campus address
+latitude: 33.7807511
+longitude: -117.8654488
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 10247

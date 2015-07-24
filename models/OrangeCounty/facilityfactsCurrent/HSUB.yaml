@@ -1,0 +1,19 @@
+---
+name: HUNTINGTON BEACH HOSPITAL SUBACUTE UNIT
+abbrev: HSUB
+category: NURSINGHOME
+nBeds: null
+nBeds_prov: null
+meanLOSICU:
+    prov: No ICU present
+    value: 0.0
+fracAdultPatientDaysICU: 0.0
+fracAdultPatientDaysICU_prov: Nursing homes don't have ICUs
+address: 17772 Beach Boulevard, Huntington Beach, CA 92647
+address_prov: google then http://www.hbhospital.org/About-Us/Directions.aspx
+latitude: 33.70364
+longitude: -117.986656
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: ''

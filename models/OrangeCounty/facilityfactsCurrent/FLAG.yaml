@@ -1,0 +1,50 @@
+---
+name: FLAGSHIP HEALTHCARE CENTER
+abbrev: FLAG
+category: NURSINGHOME
+meanPop: 167.0
+meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+nBeds: 167
+nBeds_prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls
+meanLOSICU:
+    prov: No ICU present
+    value: 0.0
+meanLOS:
+    prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $C
+    value: 365.0
+fracAdultPatientDaysICU: 0.0
+fracAdultPatientDaysICU_prov: Nursing homes don't have ICUs
+address: 466 Flagship Rd, Newport Beach, CA 92663
+address_prov: google
+latitude: 33.627986
+longitude: -117.928114
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 1219
+totalTransfersIn:
+    prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+    value: 1113
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 11
+-   category: HOSPITAL
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 278.5
+-   category: LTAC
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 0
+losModel:
+    negLogLikPerSample: 5.364245348017695
+    nsamp: 1388
+    parms:
+    - 0.7360844390780377
+    - 3.2393740749947497
+    - 0.5413087490742187
+    - 0.0016217058855825786
+    pdf: $0*lognorm(mu=$1,sigma=$2)+(1-$0)*expon(lambda=$3)
+    prov: nh_los_model_fit.py r51 applied to Length_of_Stay_2007_to_2009_OC_Nursing_Homes-12-18-11_SMB_with_abbrev_RHEA.csv

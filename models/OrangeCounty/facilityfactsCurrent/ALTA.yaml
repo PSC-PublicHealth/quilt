@@ -1,0 +1,50 @@
+---
+name: ALTA GARDENS CARE CENTER
+abbrev: ALTA
+category: NURSINGHOME
+meanPop: 129.0
+meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+nBeds: 129
+nBeds_prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls
+meanLOSICU:
+    prov: No ICU present
+    value: 0.0
+meanLOS:
+    prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $C
+    value: 365.0
+fracAdultPatientDaysICU: 0.0
+fracAdultPatientDaysICU_prov: Nursing homes don't have ICUs
+address: 13075 Blackbird St, Garden Grove, CA 92843
+address_prov: google
+latitude: 33.7734359
+longitude: -117.913515
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 350
+totalTransfersIn:
+    prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+    value: 334
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 6
+-   category: HOSPITAL
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 196
+-   category: LTAC
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 1
+losModel:
+    negLogLikPerSample: 6.397730972821069
+    nsamp: 591
+    parms:
+    - 0.5718643827883648
+    - 3.7039861620096373
+    - 0.807224889278961
+    - 0.001518465095007745
+    pdf: $0*lognorm(mu=$1,sigma=$2)+(1-$0)*expon(lambda=$3)
+    prov: nh_los_model_fit.py r51 applied to Length_of_Stay_2007_to_2009_OC_Nursing_Homes-12-18-11_SMB_with_abbrev_RHEA.csv

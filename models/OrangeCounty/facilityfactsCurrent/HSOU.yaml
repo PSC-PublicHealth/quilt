@@ -1,0 +1,46 @@
+---
+name: HEALTHSOUTH TUSTIN REHABILITATION HOSPITAL
+abbrev: HSOU
+category: LTAC
+meanPop: 30.972602750054797
+meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+meanLOSICU:
+    enddate: 12/31/2007
+    prov: email Sarah Bartsch 6/9/2015
+    startdate: 1/1/2007
+    value: 0.0
+meanLOS:
+    prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $C
+    value: 12.19525351
+fracAdultPatientDaysICU: 0.0
+fracAdultPatientDaysICU_prov: email Sarah Bartsch 6/9/2015
+address: 14851 Yorba St, Tustin, CA 92780
+address_prov: google
+latitude: 33.7474547
+longitude: -117.8309474
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 950
+totalTransfersIn:
+    prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+    value: 10
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 30
+-   category: HOSPITAL
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 58
+-   category: LTAC
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 0
+losModel:
+    parms:
+    - 2.3927479683
+    - 0.4968523256
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp&NH)_Inputs_Adult_2007_v03_06APR2012_KFW.xlsx:1_LOS

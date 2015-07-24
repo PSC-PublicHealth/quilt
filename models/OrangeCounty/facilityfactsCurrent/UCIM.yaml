@@ -1,0 +1,44 @@
+---
+name: UNIVERSITY OF CALIFORNIA IRVINE MEDICAL CENTER
+abbrev: UCIM
+category: HOSPITAL
+meanLOSICU:
+    prov: ICU Estimated LOS 7-22-09.xls $D
+    value: 6.6
+meanPop: 245.68767124643833
+meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+meanLOS:
+    prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $C
+    value: 6.493555395
+fracAdultPatientDaysICU: 0.2049116979
+fracAdultPatientDaysICU_prov: ICU Estimated LOS 7-22-09.xls $B
+address: '101 The City Dr S # 56, Orange, CA 92868'
+address_prov: google
+latitude: 33.7888682
+longitude: -117.8909467
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 17363
+totalTransfersIn:
+    prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+    value: 463.5999999999999
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 667.864321608
+-   category: HOSPITAL
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 93
+-   category: LTAC
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 20
+losModel:
+    parms:
+    - 1.4938707037
+    - 0.7975749284
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp&NH)_Inputs_Adult_2007_v03_06APR2012_KFW.xlsx:1_LOS

@@ -1,0 +1,46 @@
+---
+name: COLLEGE HOSPITAL COSTA MESA
+abbrev: COLL
+category: LTAC
+meanPop: 95.0191780820548
+meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+meanLOSICU:
+    enddate: 12/31/2007
+    prov: email Sarah Bartsch 6/9/2015
+    startdate: 1/1/2007
+    value: 0.0
+meanLOS:
+    prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $C
+    value: 9.86685633
+fracAdultPatientDaysICU: 0.0
+fracAdultPatientDaysICU_prov: email Sarah Bartsch 6/9/2015
+address: 301 Victoria St, Costa Mesa, CA 92627
+address_prov: google
+latitude: 33.651829
+longitude: -117.91198
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 4187
+totalTransfersIn:
+    prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+    value: 14
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 17
+-   category: HOSPITAL
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 10
+-   category: LTAC
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 1
+losModel:
+    parms:
+    - 1.7753559051
+    - 0.8502337642
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp&NH)_Inputs_Adult_2007_v03_06APR2012_KFW.xlsx:1_LOS

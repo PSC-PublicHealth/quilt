@@ -1,0 +1,44 @@
+---
+name: IRVINE REGIONAL HOSPITAL AND MEDICAL CENTER
+abbrev: IRVR
+category: HOSPITAL
+meanPop: 103.37534247758906
+meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+meanLOSICU:
+    prov: Mean of known values from ICU Estimated LOS 7-22-09
+    value: 7.7
+meanLOS:
+    prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $C
+    value: 3.88509061
+fracAdultPatientDaysICU: 0.108
+fracAdultPatientDaysICU_prov: Mean of known values from ICU Estimated LOS 7-22-09
+address: 16200 Sand Canyon Avenue, Irvine, CA 92618
+address_prov: google then http://www.cms.gov/Medicare/Medicare-General-Information/MedicareApprovedFacilitie/Carotid-Artery-Stenting-Facilities-Items/Irvine-Regional-Hospital-and-Medical-Center.html
+latitude: 33.6608946
+longitude: -117.7722362
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 11764
+totalTransfersIn:
+    prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+    value: 170
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 170
+-   category: HOSPITAL
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 114
+-   category: LTAC
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 5
+losModel:
+    parms:
+    - 1.1989319306
+    - 0.5368414111
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp&NH)_Inputs_Adult_2007_v03_06APR2012_KFW.xlsx:1_LOS

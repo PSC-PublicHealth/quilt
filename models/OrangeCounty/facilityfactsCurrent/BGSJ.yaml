@@ -1,0 +1,50 @@
+---
+name: BRIGHTON GARDENS OF SAN JUAN CAPISTRANO
+abbrev: BGSJ
+category: NURSINGHOME
+meanPop: 45.0
+meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+nBeds: 45
+nBeds_prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls
+meanLOSICU:
+    prov: No ICU present
+    value: 0.0
+meanLOS:
+    prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $C
+    value: 365.0
+fracAdultPatientDaysICU: 0.0
+fracAdultPatientDaysICU_prov: Nursing homes don't have ICUs
+address: 31741 Rancho Viejo Road, San Juan Capistrano, CA 92675
+address_prov: google then www.seniorsforliving.com
+latitude: 33.5008129
+longitude: -117.6540501
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls:AnnualAdmissions $B
+    value: 427
+totalTransfersIn:
+    prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+    value: 302
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 3
+-   category: HOSPITAL
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 31.5
+-   category: LTAC
+    count:
+        prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
+        value: 4
+losModel:
+    negLogLikPerSample: 4.646450874105375
+    nsamp: 650
+    parms:
+    - 0.8574532444345621
+    - 3.2332226535965436
+    - 0.4579907232628043
+    - 0.002103224649689042
+    pdf: $0*lognorm(mu=$1,sigma=$2)+(1-$0)*expon(lambda=$3)
+    prov: nh_los_model_fit.py r51 applied to Length_of_Stay_2007_to_2009_OC_Nursing_Homes-12-18-11_SMB_with_abbrev_RHEA.csv
