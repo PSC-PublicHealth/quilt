@@ -2,8 +2,6 @@
 name: CHILDREN'S HOSPITAL AT MISSION
 abbrev: CMIS
 category: HOSPITAL
-nBeds: null
-nBeds_prov: null
 meanLOSICU:
     prov: Mean of known values from ICU Estimated LOS 7-22-09
     value: 7.7

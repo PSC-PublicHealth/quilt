@@ -2,8 +2,6 @@
 name: HUNTINGTON BEACH HOSPITAL SUBACUTE UNIT
 abbrev: HSUB
 category: NURSINGHOME
-nBeds: null
-nBeds_prov: null
 meanLOSICU:
     prov: No ICU present
     value: 0.0
