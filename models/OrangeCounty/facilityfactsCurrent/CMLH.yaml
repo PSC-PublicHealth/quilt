@@ -2,8 +2,8 @@
 name: CAREMERIDIAN - LA HABRA
 abbrev: CMLH
 category: NURSINGHOME
-meanPop: 10.0
-meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
+nBeds: 10
+nBeds_prov: hand edit based on http://hfcis.cdph.ca.gov/longtermcare/Facility.aspx?fac=980001273
 meanLOSICU:
     prov: No ICU present
     value: 0.0
@@ -36,3 +36,5 @@ totalTransfersOut:
     count:
         prov: 2007_OC_Nursing_Homes_and_Hospitals_Patient_Flow_UPS_RHEA.xlsx:Full_Grid_direct_SelfR:$B2:$CX102
         value: 0
+meanPop: 10
+meanPop_prov: Average_Daily_Census_2007_for_OC_Nursing_Homes_10-31-11.xlsx:RHEA

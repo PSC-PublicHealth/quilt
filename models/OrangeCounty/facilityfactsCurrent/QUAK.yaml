@@ -2,8 +2,6 @@
 name: QUAKER GARDENS
 abbrev: QUAK
 category: NURSINGHOME
-meanPop: 58.0
-meanPop_prov: RHEA_Hosp-NH_Inputs_ADULT_2007_v03_06APR2012_properties_MRSA-STRAT-LOS.csv $B*$C/365
 nBeds: 58
 nBeds_prov: 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls
 meanLOSICU:
@@ -48,3 +46,5 @@ losModel:
     - 0.001387712004365239
     pdf: $0*lognorm(mu=$1,sigma=$2)+(1-$0)*expon(lambda=$3)
     prov: nh_los_model_fit.py r51 applied to Length_of_Stay_2007_to_2009_OC_Nursing_Homes-12-18-11_SMB_with_abbrev_RHEA.csv
+meanPop: 52
+meanPop_prov: Average_Daily_Census_2007_for_OC_Nursing_Homes_10-31-11.xlsx:RHEA
