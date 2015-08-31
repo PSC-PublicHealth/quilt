@@ -38,3 +38,13 @@ totalTransfersOut:
         value: 0
 meanPop: 10
 meanPop_prov: Average_Daily_Census_2007_for_OC_Nursing_Homes_10-31-11.xlsx:RHEA
+losModel:
+    negLogLikPerSample: 5.65736498834
+    nsamp: 55731
+    parms:
+    - 6.77776462e-01
+    - 3.30759124e+00
+    - 5.93862260e-01
+    - 1.73725154e-03
+    pdf: $0*lognorm(mu=$1,sigma=$2)+(1-$0)*expon(lambda=$3)
+    prov: Orange County aggregate from nh_los_model_fit.py r51 applied to Length_of_Stay_2007_to_2009_OC_Nursing_Homes-12-18-11_SMB_with_abbrev_RHEA.csv
