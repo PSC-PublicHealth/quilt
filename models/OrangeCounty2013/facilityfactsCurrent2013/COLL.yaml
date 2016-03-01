@@ -1,0 +1,53 @@
+---
+name: COLLEGE HOSPITAL COSTA MESA
+abbrev: COLL
+category: LTAC
+meanPop:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B*$C/365
+    value: 85.82739726057864
+meanLOSICU:
+    enddate: 12/31/2007
+    prov: LTACSs do not have ICUs
+    startdate: 1/1/2007
+    value: 0.0
+meanLOS:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B
+    value: 12.3286107832
+fracAdultPatientDaysICU:
+    prov: LTACSs do not have ICUs
+    value: 0.0
+address: 301 Victoria St, Costa Mesa, CA 92627
+address_prov: google
+latitude: 33.651829
+longitude: -117.91198
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 'rhea-dante de6632b751eca:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls : 2_Dsch_Path sum of
+        $B to $E'
+    value: 2889
+totalTransfersIn:
+    prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+        overall sum
+    value: 75
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 18
+-   category: HOSPITAL
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 65
+-   category: LTAC
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 1
+losModel:
+    parms:
+    - 1.992955598
+    - 0.8489035215
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xlsx:1_LOS

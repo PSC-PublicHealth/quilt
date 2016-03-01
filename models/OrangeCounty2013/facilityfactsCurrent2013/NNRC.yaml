@@ -1,0 +1,45 @@
+---
+name: NEWPORT NURSING AND REHABILITATION CENTER
+abbrev: NNRC
+category: NURSINGHOME
+nBeds:
+    prov: rhea-dante a641a5927fe:"rhea-dante/data/OC_2013/SNF bed size.xlsx":Sheet3 $C
+    value: 59
+meanLOSICU:
+    prov: NURSINGHOMEs do not have ICUs
+    value: 0.0
+meanLOS:
+    prov: rhea-dante a641a5927fe2070c9:rhea-dante/data/OC_2013/length_of_stay_2011_2012_OC_Nursing_Homes_08-12-2014_begin0000-end2012.csv
+        means by facility
+    value: 40.267605633802816
+fracAdultPatientDaysICU:
+    prov: NURSINGHOMEs do not have ICUs
+    value: 0.0
+address: 1555 Superior Ave, Newport Beach, CA 92663
+address_prov: google
+latitude: 33.6310031
+longitude: -117.9293079
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalTransfersIn:
+    prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+        overall sum
+    value: 1
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 1
+losModel:
+    negLogLikPerSample: 4.429940556421659
+    nsamp: 1065
+    parms:
+    - 0.999
+    - 3.06008547772186
+    - 0.9522462051318872
+    - 0.04374230483860465
+    pdf: $0*lognorm(mu=$1,sigma=$2)+(1-$0)*expon(lambda=$3)
+    prov: nh_los_model_fit.py r124 applied to length_of_stay_2011_2012_OC_Nursing_Homes_08-12-2014_begin0000-end2012.csv
+meanPop:
+    prov: from git/rhea-dante 6d28828689f399:data/OC_2013/Average_daily_census_2011-2012_08-12-2014+SILOS+SCLE.csv
+    value: 53

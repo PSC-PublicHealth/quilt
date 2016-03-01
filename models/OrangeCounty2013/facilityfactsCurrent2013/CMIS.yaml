@@ -1,0 +1,15 @@
+---
+name: CHILDREN'S HOSPITAL AT MISSION
+abbrev: CMIS
+category: HOSPITAL
+meanLOSICU:
+    prov: Mean of known values, ICU_Estimated_LOS_7-22-09.txt second section
+    value: 7.7
+fracAdultPatientDaysICU:
+    prov: Mean of known values, ICU_Estimated_LOS_7-22-09.txt second section
+    value: 0.10800000000000001
+address: 27700 Medical Center Rd. 5th Floor, Mission Viejo, CA 92691
+address_prov: google then www.choc.org
+latitude: 33.6062809
+longitude: -117.6728185
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address

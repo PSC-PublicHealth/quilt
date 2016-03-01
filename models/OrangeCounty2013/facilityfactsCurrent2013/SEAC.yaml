@@ -1,0 +1,55 @@
+---
+name: SEA CLIFF HEALTHCARE CENTER
+abbrev: SEAC
+category: NURSINGHOME
+nBeds:
+    prov: rhea-dante a641a5927fe:"rhea-dante/data/OC_2013/SNF bed size.xlsx":Sheet3 $C
+    value: 182
+meanLOSICU:
+    prov: NURSINGHOMEs do not have ICUs
+    value: 0.0
+meanLOS:
+    prov: rhea-dante a641a5927fe2070c9:rhea-dante/data/OC_2013/length_of_stay_2011_2012_OC_Nursing_Homes_08-12-2014_begin0000-end2012.csv
+        means by facility
+    value: 171.63253012048193
+fracAdultPatientDaysICU:
+    prov: NURSINGHOMEs do not have ICUs
+    value: 0.0
+address: 18811 Florida St, Huntington Beach, CA 92648
+address_prov: google
+latitude: 33.6891133
+longitude: -117.9917288
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalTransfersIn:
+    prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+        overall sum
+    value: 1071
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 244
+-   category: HOSPITAL
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 474
+-   category: LTAC
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 8
+losModel:
+    negLogLikPerSample: 5.377790900764389
+    nsamp: 1162
+    parms:
+    - 0.7507639787201442
+    - 2.7420225651549472
+    - 1.0422796072421876
+    - 0.0016465628566134862
+    pdf: $0*lognorm(mu=$1,sigma=$2)+(1-$0)*expon(lambda=$3)
+    prov: nh_los_model_fit.py r124 applied to length_of_stay_2011_2012_OC_Nursing_Homes_08-12-2014_begin0000-end2012.csv
+meanPop:
+    prov: from git/rhea-dante 6d28828689f399:data/OC_2013/Average_daily_census_2011-2012_08-12-2014+SILOS+SCLE.csv
+    value: 179

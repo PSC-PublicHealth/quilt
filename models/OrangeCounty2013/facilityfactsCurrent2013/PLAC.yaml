@@ -1,0 +1,51 @@
+---
+name: PLACENTIA LINDA HOSPITAL
+abbrev: PLAC
+category: HOSPITAL
+meanLOSICU:
+    prov: ICU_Estimated_LOS_7-22-09.txt first section
+    value: 5.0
+meanPop:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B*$C/365
+    value: 42.62739726030302
+meanLOS:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B
+    value: 4.1635001338
+fracAdultPatientDaysICU:
+    prov: ICU_Estimated_LOS_7-22-09.txt first section
+    value: 0.12
+address: 1301 N Rose Dr, Placentia, CA 92870
+address_prov: google
+latitude: 33.8872233
+longitude: -117.8421237
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 'rhea-dante de6632b751eca:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls : 2_Dsch_Path sum of
+        $B to $E'
+    value: 3638
+totalTransfersIn:
+    prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+        overall sum
+    value: 541
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 1035
+-   category: HOSPITAL
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 253
+-   category: LTAC
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 5
+losModel:
+    parms:
+    - 1.2664196192
+    - 0.5386625124
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xlsx:1_LOS

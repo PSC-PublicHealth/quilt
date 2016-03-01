@@ -1,0 +1,51 @@
+---
+name: LA PALMA INTERCOMMUNITY HOSPITAL
+abbrev: LPIH
+category: HOSPITAL
+meanLOSICU:
+    prov: ICU_Estimated_LOS_7-22-09.txt first section
+    value: 9.5
+meanPop:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B*$C/365
+    value: 55.230136986415346
+meanLOS:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B
+    value: 5.6817925592
+fracAdultPatientDaysICU:
+    prov: ICU_Estimated_LOS_7-22-09.txt first section
+    value: 0.07
+address: 7901 Walker St, La Palma, CA 90623
+address_prov: google
+latitude: 33.847533
+longitude: -118.038414
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 'rhea-dante de6632b751eca:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls : 2_Dsch_Path sum of
+        $B to $E'
+    value: 3402
+totalTransfersIn:
+    prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+        overall sum
+    value: 671
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 743
+-   category: HOSPITAL
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 309
+-   category: LTAC
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 16
+losModel:
+    parms:
+    - 1.4512246924
+    - 0.6983511034
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xlsx:1_LOS

@@ -1,0 +1,51 @@
+---
+name: TUSTIN HOSPITAL MEDICAL CENTER
+abbrev: TUSH
+category: LTAC
+meanLOSICU:
+    prov: LTACSs do not have ICUs
+    value: 0.0
+meanPop:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B*$C/365
+    value: 26.147945205433974
+meanLOS:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B
+    value: 25.7250673854
+fracAdultPatientDaysICU:
+    prov: LTACSs do not have ICUs
+    value: 0.0
+address: 14662 Newport Ave, Tustin, CA 92780
+address_prov: google
+latitude: 33.7305509
+longitude: -117.8283481
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 'rhea-dante de6632b751eca:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls : 2_Dsch_Path sum of
+        $B to $E'
+    value: 359
+totalTransfersIn:
+    prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+        overall sum
+    value: 302
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 11
+-   category: HOSPITAL
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 17
+-   category: LTAC
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 8
+losModel:
+    parms:
+    - 3.0036821995
+    - 0.703799416
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xlsx:1_LOS

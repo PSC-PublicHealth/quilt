@@ -1,0 +1,22 @@
+---
+name: ANAHEIM GENERAL HOSPITAL - BUENA PARK
+abbrev: AGBP
+category: NURSINGHOME
+nBeds:
+    prov: OLD! 2007_Annual_Admissions__Bed_Sizes_TA DKsmb.xls
+    value: -1
+meanLOSICU:
+    prov: NURSINGHOMEs do not have ICUs
+    value: 0.0
+meanLOS:
+    prov: median of rhea-dante a641a5927fe2070c9:rhea-dante/data/OC_2013/length_of_stay_2011_2012_OC_Nursing_Homes_08-12-2014_begin0000-end2012.csv
+        means by facility
+    value: 171.63253012048193
+fracAdultPatientDaysICU:
+    prov: NURSINGHOMEs do not have ICUs
+    value: 0.0
+address: 5742 Beach Blvd, Buena Park, CA 90621
+address_prov: google
+latitude: 33.876427
+longitude: -117.997895
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address

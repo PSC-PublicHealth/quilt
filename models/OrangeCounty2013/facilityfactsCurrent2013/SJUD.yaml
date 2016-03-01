@@ -1,0 +1,51 @@
+---
+name: ST. JUDE MEDICAL CENTER
+abbrev: SJUD
+category: HOSPITAL
+meanPop:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B*$C/365
+    value: 247.81369863102876
+meanLOSICU:
+    prov: Mean of known values, ICU_Estimated_LOS_7-22-09.txt second section
+    value: 7.7
+meanLOS:
+    prov: rhea-dante e23563bcfbd7:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls:1_LOS $B
+    value: 5.9254503767
+fracAdultPatientDaysICU:
+    prov: Mean of known values, ICU_Estimated_LOS_7-22-09.txt second section
+    value: 0.10800000000000001
+address: 101 E Valencia Mesa Dr, Fullerton, CA 92835
+address_prov: google
+latitude: 33.8941778
+longitude: -117.9276156
+lat_lon_prov: maps.googleapis.com/maps/api/geocode on address
+totalDischarges:
+    prov: 'rhea-dante de6632b751eca:rhea-dante/data/OC_2013/RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xls : 2_Dsch_Path sum of
+        $B to $E'
+    value: 14568
+totalTransfersIn:
+    prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+        overall sum
+    value: 2233
+totalTransfersOut:
+-   category: NURSINGHOME
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 2480
+-   category: HOSPITAL
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 74
+-   category: LTAC
+    count:
+        prov: rhea-dante de6632b751eca:rhea-dante/data/OC_2013/Transferring_matrix_abbrev_9-18-2014_with-update-10-2-2014_copy_RHEA_Direct_fix_HSOU+silos+SCLE.csv
+            summed by category
+        value: 12
+losModel:
+    parms:
+    - 1.5174228344
+    - 0.6755347347
+    pdf: lognorm(mu=$0,sigma=$1)
+    prov: RHEA(Hosp_NH)_Inputs_ADULT_2011_v04_08-06-2014.xlsx:1_LOS
