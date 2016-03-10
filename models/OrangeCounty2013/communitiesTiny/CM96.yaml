@@ -2,5 +2,6 @@
 name: Synthetic community 96
 abbrev: CM96
 category: COMMUNITY
-meanPop: 300
-meanPop_prov: 'completely synthetic from $Id: generate_community_descriptions.py 65 2015-08-21 20:41:13Z welling $'
+meanPop:
+    prov: 'completely synthetic from $Id: generate_community_descriptions.py 65 2015-08-21 20:41:13Z welling $'
+    value: 300
