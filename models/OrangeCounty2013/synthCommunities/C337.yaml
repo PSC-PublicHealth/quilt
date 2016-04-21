@@ -1,0 +1,10 @@
+---
+name: SynthPop for FIPS 06059 tract 099214
+abbrev: C337
+category: COMMUNITY
+longitude: -117.96280062967436
+meanPop:
+    prov: Synthetic population size for this tract
+    value: 3715
+latitude: 33.683239836908584
+lat_lon_prov: Means of lat and lon for all agents in this tract
