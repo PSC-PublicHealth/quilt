@@ -24,8 +24,8 @@ This provides a simple test routine for patches.
 import sys
 from random import choice, seed, random
 
-import patches
-import peopleplaces
+import quilt.patches as patches
+import quilt.peopleplaces as peopleplaces
 import logging
 
 logger = logging.getLogger(__name__)
