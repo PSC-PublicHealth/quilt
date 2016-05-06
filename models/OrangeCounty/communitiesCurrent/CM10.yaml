@@ -1,6 +1,0 @@
----
-name: Synthetic community 10
-abbrev: CM10
-category: COMMUNITY
-meanPop: 30000
-meanPop_prov: 'completely synthetic from $Id: generate_communities.py 62 2015-06-01 21:48:41Z welling $'

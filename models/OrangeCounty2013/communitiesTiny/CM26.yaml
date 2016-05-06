@@ -1,7 +1,0 @@
----
-name: Synthetic community 26
-abbrev: CM26
-category: COMMUNITY
-meanPop:
-    prov: 'completely synthetic from $Id: generate_community_descriptions.py 65 2015-08-21 20:41:13Z welling $'
-    value: 300
