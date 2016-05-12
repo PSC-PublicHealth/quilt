@@ -246,78 +246,84 @@ class Person(patches.Agent):
     def run(self, startTime):
         timeNow = startTime
         timeNow = self.sleep(self.getPostArrivalPauseTime(timeNow))
-        while True:
-            if self.debug:
-                self.logger.debug('%s point 0: state %s day %s' %
-                                  (self.name, self.fsmstate, timeNow))
-            if self.fsmstate == Person.STATE_ATLOC:
-                newLocAddr = self.getNewLocAddr(timeNow)
+        try:
+            while True:
                 if self.debug:
-                    self.logger.debug('%s point 1: new addr %s vs current %s' %
-                                      (self.name, newLocAddr, self.locAddr))
-                if newLocAddr is None:
+                    self.logger.debug('%s point 0: state %s day %s' %
+                                      (self.name, self.fsmstate, timeNow))
+                if self.fsmstate == Person.STATE_ATLOC:
+                    newLocAddr = self.getNewLocAddr(timeNow)
                     if self.debug:
-                        self.logger.debug('%s point 5: agent dies' %
-                                          self.name)
-                    self.handleDeparture(timeNow)
-                    self.handleDeath(timeNow)
-                    self.patch.launch(DepartureMsg(self.name + '_depMsg',
-                                                   self.patch,
-                                                   self.loc.getDepartureMsgPayload(self),
-                                                   self.loc.getReqQueueAddr()),
-                                      timeNow)
-                    timeNow = self.loc.unlock(self)
-                    break
-                elif newLocAddr == self.locAddr:
-                    if self.debug:
-                        self.logger.debug('%s point 9: sleeping for %s' %
-                                          (self.name, self.loc.checkInterval))
-                    timeNow = self.sleep(self.loc.checkInterval)
-                else:
-                    self.patch.launch(DepartureMsg(self.name + '_depMsg',
-                                                   self.patch,
-                                                   self.loc.getDepartureMsgPayload(self),
-                                                   self.loc.getReqQueueAddr()),
-                                      timeNow)
-                    self.newLocAddr = newLocAddr
-                    self.handleDeparture(timeNow)
-                    timeNow = self.loc.unlock(self)
-                    self.fsmstate = Person.STATE_MOVING
+                        self.logger.debug('%s point 1: new addr %s vs current %s' %
+                                          (self.name, newLocAddr, self.locAddr))
+                    if newLocAddr is None:
+                        if self.debug:
+                            self.logger.debug('%s point 5: agent dies' %
+                                              self.name)
+                        self.handleDeparture(timeNow)
+                        self.handleDeath(timeNow)
+                        self.patch.launch(DepartureMsg(self.name + '_depMsg',
+                                                       self.patch,
+                                                       self.loc.getDepartureMsgPayload(self),
+                                                       self.loc.getReqQueueAddr()),
+                                          timeNow)
+                        timeNow = self.loc.unlock(self)
+                        break
+                    elif newLocAddr == self.locAddr:
+                        if self.debug:
+                            self.logger.debug('%s point 9: sleeping for %s' %
+                                              (self.name, self.loc.checkInterval))
+                        timeNow = self.sleep(self.loc.checkInterval)
+                    else:
+                        self.patch.launch(DepartureMsg(self.name + '_depMsg',
+                                                       self.patch,
+                                                       self.loc.getDepartureMsgPayload(self),
+                                                       self.loc.getReqQueueAddr()),
+                                          timeNow)
+                        self.newLocAddr = newLocAddr
+                        self.handleDeparture(timeNow)
+                        timeNow = self.loc.unlock(self)
+                        self.fsmstate = Person.STATE_MOVING
 
-            elif self.fsmstate == Person.STATE_MOVING:
-                self.loc = None
-                addr, final = self.patch.getPathTo(self.newLocAddr)
-                if final:
-                    self.fsmstate = Person.STATE_JUSTARRIVED
-                    self.loc = addr
-                    self.locAddr = self.newLocAddr
+                elif self.fsmstate == Person.STATE_MOVING:
+                    self.loc = None
+                    addr, final = self.patch.getPathTo(self.newLocAddr)
+                    if final:
+                        self.fsmstate = Person.STATE_JUSTARRIVED
+                        self.loc = addr
+                        self.locAddr = self.newLocAddr
+                        if self.debug:
+                            self.logger.debug('%s point 6: arrive tier %s day %s'
+                                              % (self.name, self.ward.tier, timeNow))
+                    timeNow = addr.lock(self)
+
+                elif self.fsmstate == Person.STATE_JUSTARRIVED:
+                    self.handleArrival(timeNow)
+                    self.patch.launch(ArrivalMsg(self.name + '_arvMsg',
+                                                 self.patch,
+                                                 self.loc.getArrivalMsgPayload(self),
+                                                 self.loc.getReqQueueAddr()),
+                                      timeNow)
+                    self.fsmstate = Person.STATE_ATLOC
                     if self.debug:
-                        self.logger.debug('%s point 6: arrive tier %s day %s'
-                                          % (self.name, self.ward.tier, timeNow))
-                timeNow = addr.lock(self)
-            elif self.fsmstate == Person.STATE_JUSTARRIVED:
-                self.handleArrival(timeNow)
-                self.patch.launch(ArrivalMsg(self.name + '_arvMsg',
-                                             self.patch,
-                                             self.loc.getArrivalMsgPayload(self),
-                                             self.loc.getReqQueueAddr()),
-                                  timeNow)
-                self.fsmstate = Person.STATE_ATLOC
+                        self.logger.debug('%s point 7: day %s'
+                                          % (self.name, timeNow))
+                    timeNow = self.sleep(self.getPostArrivalPauseTime(timeNow))
                 if self.debug:
-                    self.logger.debug('%s point 7: day %s'
-                                      % (self.name, timeNow))
-                timeNow = self.sleep(self.getPostArrivalPauseTime(timeNow))
-            if self.debug:
-                self.logger.debug('%s point 2: state is now %s day %s' %
-                                  (self.name, self.fsmstate, timeNow))
+                    self.logger.debug('%s point 2: state is now %s day %s' %
+                                      (self.name, self.fsmstate, timeNow))
+        finally:
+            self.logger.debug('%s run method is exiting' % self.name)
 
     def __getstate__(self):
         d = patches.Agent.__getstate__(self)
         d['newLocAddr'] = self.newLocAddr
         d['fsmstate'] = self.fsmstate
+        d['loggerName'] = self.logger.name
         return d
 
     def __setstate__(self, d):
         patches.Agent.__setstate__(self, d)
         self.newLocAddr = d['newLocAddr']
         self.fsmstate = d['fsmstate']
+        self.logger = logging.getLogger(d['loggerName'])
