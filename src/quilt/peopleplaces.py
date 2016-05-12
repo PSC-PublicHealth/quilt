@@ -193,11 +193,19 @@ class Person(patches.Agent):
         """
         super(Person, self).__init__(name, patch, debug=debug)
         self.fsmstate = Person.STATE_ATLOC
-        self.loc = loc
-        self.loc.lock(self)
+        self._loc = loc
+        self._loc.lock(self)
         self.locAddr = loc.getGblAddr()
         self.newLocAddr = None
         self.logger = logging.getLogger(__name__ + '.Person')
+
+    @property
+    def loc(self):
+        if self._loc is None:
+            loc, final = self.patch.getPathTo(self.locAddr)
+            assert final, '%s: locAddr is not local' % self.name
+            self._loc = loc
+        return self._loc
 
     def getPostArrivalPauseTime(self, timeNow):
         """
@@ -286,11 +294,11 @@ class Person(patches.Agent):
                         self.fsmstate = Person.STATE_MOVING
 
                 elif self.fsmstate == Person.STATE_MOVING:
-                    self.loc = None
+                    self._loc = None
                     addr, final = self.patch.getPathTo(self.newLocAddr)
                     if final:
                         self.fsmstate = Person.STATE_JUSTARRIVED
-                        self.loc = addr
+                        self._loc = addr
                         self.locAddr = self.newLocAddr
                         if self.debug:
                             self.logger.debug('%s point 6: arrive tier %s day %s'
@@ -317,6 +325,7 @@ class Person(patches.Agent):
 
     def __getstate__(self):
         d = patches.Agent.__getstate__(self)
+        d['locAddr'] = self.locAddr
         d['newLocAddr'] = self.newLocAddr
         d['fsmstate'] = self.fsmstate
         d['loggerName'] = self.logger.name
@@ -324,6 +333,8 @@ class Person(patches.Agent):
 
     def __setstate__(self, d):
         patches.Agent.__setstate__(self, d)
+        self.locAddr = d['locAddr']
+        self._loc = None
         self.newLocAddr = d['newLocAddr']
         self.fsmstate = d['fsmstate']
         self.logger = logging.getLogger(d['loggerName'])
