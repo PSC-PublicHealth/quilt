@@ -15,8 +15,6 @@
 #                                                                                 #
 ###################################################################################
 
-_rhea_svn_id_="$Id$"
-
 import sys
 import types
 from greenlet import greenlet
@@ -58,11 +56,34 @@ class Sequencer(object):
                 self._timeNow += 1
 
     def enqueue(self, agent, whenInfo=0):
-        assert isinstance(whenInfo, types.IntType), '%s: time must be an integer' % self._name
+        assert isinstance(whenInfo, types.IntType), (('%s: cannot enqueue %s: time %s is'
+                                                      ' not an integer')
+                                                     % (self._name, agent.name, whenInfo))
         assert whenInfo >= self._timeNow, '%s: cannot schedule things in the past' % self._name
         if whenInfo not in self._timeQueues:
             self._timeQueues[whenInfo] = []
         self._timeQueues[whenInfo].append(agent)
+
+    def unenqueue(self, agent, expectedWakeTime):
+        assert isinstance(expectedWakeTime, types.IntType), (('%s: cannot unenqueue %s: time %s'
+                                                              ' is not an integer')
+                                                             % (self._name, agent.name,
+                                                                 expectedWakeTime))
+        if expectedWakeTime in self._timeQueues and agent in self._timeQueues[expectedWakeTime]:
+            self._timeQueues[expectedWakeTime].remove(agent)
+        else:
+            wakeTime = self.getAgentWakeTime(agent)
+            if wakeTime is not None:
+                raise RuntimeError('%s cannot unenqueue %s: enqueued to wake at %s not %s'
+                                   % (self._name, agent.name, wakeTime, expectedWakeTime))
+
+    def getAgentWakeTime(self, agent):
+        kL = self._timeQueues.keys()
+        kL.sort()
+        for t in kL:
+            if agent in self._timeQueues[t]:
+                return t
+        return None
 
     def getTimeNow(self):
         return self._timeNow
@@ -153,6 +174,13 @@ class Agent(greenlet):
             self.parent = greenlet.getcurrent()
         self.throw()
 
+    def nextWakeTime(self):
+        """
+        Returns the time at which the agent is next expected to wake, or None if it is not
+        scheduled.
+        """
+        return self.ownerLoop.sequencer.getAgentWakeTime(self)
+
 
 class Interactant(object):
     counter = 0
@@ -200,7 +228,7 @@ class Interactant(object):
         Agents always lock interactants before modifying their state.  This can be thought of as
         'docking with' the interactant.  Only one agent can hold a lock for a normal interactant
         and be active; any agent that subsequently tries to lock the same interactant will be
-        suspended until the firs agent unlocks the interactant.  (However, see MultiInteractant).
+        suspended until the first agent unlocks the interactant.  (However, see MultiInteractant).
         Thus interactants can serve as queues; agents can enqueue themselves by locking the
         interactant and some other agent can modify them while they are in the locked state.
         """
@@ -212,6 +240,7 @@ class Interactant(object):
                 logger.debug('%s fast lock of %s' % (lockingAgent, self._name))
             return timeNow
         else:
+            assert lockingAgent == greenlet.getcurrent(), 'Agents may not lock other agents'
             self._lockQueue.append(lockingAgent)
             if not lockingAgent.timeless:
                 self._nEnqueued += 1
@@ -228,6 +257,9 @@ class Interactant(object):
         interactant.  The lock is broken, causing the first agent which is suspended waiting
         for a lock to become active.
         """
+        assert oldLockingAgent == greenlet.getcurrent(), ('%s unlock of %s with current thread %s'
+                                                          % (self._name, oldLockingAgent.name,
+                                                             greenlet.getcurrent().name))
         if self._lockingAgent != oldLockingAgent:
             raise RuntimeError('%s is not the lock of %s' % (oldLockingAgent, self._name))
         timeNow = self._ownerLoop.sequencer.getTimeNow()
@@ -272,6 +304,28 @@ class Interactant(object):
         self._ownerLoop.sequencer.enqueue(agent, timeNow)
         return agent
 
+    def suspend(self, agent):
+        """
+        The agent is expected to be live and awake but not locked by the current Interactant,
+        and the agent must not be the current thread.  This means that the agent must be waiting
+        to execute in the sequencer queue.  The agent must be scheduled to run 'now' rather than
+        at a future time.  This method removes the agent from the sequencer queue and inserts
+        it into the current Interactant's lockQueue, preventing the activation of the agent.
+        Suspending and then immediately awakening an agent returns it to its initial state,
+        as does awakening and then immediately suspending an agent.
+        """
+        timeNow = self._ownerLoop.sequencer.getTimeNow()
+        if self.isLocked(agent):
+            raise RuntimeError("%s is locked by %s; cannot suspend" % (self._name, agent.name))
+        self._ownerLoop.sequencer.unenqueue(agent, timeNow)
+        self._lockQueue.append(agent)
+        if not agent.timeless:
+            self._nEnqueued += 1
+        if self._debug:
+            logger.debug('%s suspends %s and adds to lock queue (%d still in queue)' %
+                         (self._name, agent.name, self._nEnqueued))
+        return agent
+
     def isLocked(self, agent):
         """
         Returns True if this interactant is currently locked by the given agent, whether the
@@ -314,17 +368,22 @@ class MultiInteractant(Interactant):
                 logger.debug('%s fast locked by %s' % (self._name, lockingAgent))
             return timeNow
         else:
+            assert lockingAgent == greenlet.getcurrent(), 'Agents may not lock other agents'
             self._lockQueue.append(lockingAgent)
             if not lockingAgent.timeless:
                 self._nEnqueued += 1
             if self._debug or lockingAgent.debug:
                 logger.debug('%s slow lock by %s (%d in queue)' %
                              (self._name, lockingAgent, self._nEnqueued))
-            timeNow = self._ownerLoop.switch('%s is %d in %s queue' %
-                                             (lockingAgent, len(self._lockQueue), self._name))
+            if lockingAgent == greenlet.getcurrent():
+                timeNow = self._ownerLoop.switch('%s is %d in %s queue' %
+                                                 (lockingAgent, len(self._lockQueue), self._name))
             return timeNow
 
     def unlock(self, oldLockingAgent):
+        assert oldLockingAgent == greenlet.getcurrent(), ('%s unlock of %s with current thread %s'
+                                                          % (self._name, oldLockingAgent.name,
+                                                             greenlet.getcurrent().name))
         if oldLockingAgent not in self._lockingAgentList:
             raise RuntimeError('%s is not a lock of %s' % (oldLockingAgent, self._name))
         timeNow = self._ownerLoop.sequencer.getTimeNow()
@@ -491,7 +550,7 @@ def describeSelf():
 
 
 def main():
-    "This is a simple test routine which takes csv files as arguments"
+    "This is a simple test routine."
     global verbose, debug
 
     mainLoop = MainLoop(safety=10000)
