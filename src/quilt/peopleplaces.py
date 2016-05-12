@@ -76,6 +76,13 @@ class Manager(patches.Agent):
         else:
             raise RuntimeError("%s unexpectedly got the message %s" % (self.name, req.name))
 
+    def perTickActions(self, timeNow):
+        """
+        This hook allows derived classes to add per-tick behavior without messing with
+        the run() method.
+        """
+        pass
+
     def run(self, startTime):
         timeNow = startTime  # @UnusedVariable
         logDebug = self.logger.isEnabledFor(logging.DEBUG)
@@ -89,6 +96,7 @@ class Manager(patches.Agent):
                         req = rQ._lockQueue[0]
                         timeNow = self.handleRequest(req, logDebug, timeNow)
                         rQ.awaken(req)
+            self.perTickActions(timeNow)
             timeNow = self.sleep(0)  # @UnusedVariable
 
 
