@@ -321,7 +321,8 @@ class Person(patches.Agent):
                     self.logger.debug('%s point 2: state is now %s day %s' %
                                       (self.name, self.fsmstate, timeNow))
         finally:
-            self.logger.debug('%s run method is exiting' % self.name)
+            if self.debug:
+                self.logger.debug('%s run method is exiting' % self.name)
 
     def __getstate__(self):
         d = patches.Agent.__getstate__(self)
