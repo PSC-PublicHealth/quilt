@@ -203,8 +203,8 @@ class Person(patches.Agent):
     def loc(self):
         if self._loc is None:
             loc, final = self.patch.getPathTo(self.locAddr)
-            assert final, '%s: locAddr is not local' % self.name
-            self._loc = loc
+            if final:
+                self._loc = loc
         return self._loc
 
     def getPostArrivalPauseTime(self, timeNow):
@@ -253,7 +253,8 @@ class Person(patches.Agent):
 
     def run(self, startTime):
         timeNow = startTime
-        timeNow = self.sleep(self.getPostArrivalPauseTime(timeNow))
+        if self.loc is not None:  # it may just have been created on a gate exit with no loc
+            timeNow = self.sleep(self.getPostArrivalPauseTime(timeNow))
         try:
             while True:
                 if self.debug:
