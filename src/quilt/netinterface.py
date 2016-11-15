@@ -128,7 +128,8 @@ class NetworkInterface(object):
     MPI_TAG_MORE = 1
     MPI_TAG_END = 2
 
-    maxChunksPerMsg = 32
+    #maxChunksPerMsg = 32
+    maxChunksPerMsg = 24
     irecvBufferSize = 1024 * 1024
 
     def __init__(self, comm, deterministic=False):

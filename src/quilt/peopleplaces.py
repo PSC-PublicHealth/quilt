@@ -149,7 +149,6 @@ class RequestQueue(patches.Interactant):
 
 class ManagementBase(object):
     def __init__(self, name, patch, managerClass=None, reqQueueClasses=None):
-        super(ManagementBase, self).__init__()
         if managerClass is None:
             managerClass = Manager
         if reqQueueClasses is None:
