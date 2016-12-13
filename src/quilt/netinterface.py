@@ -114,7 +114,7 @@ class GblAddr(_InnerGblAddr):
                 and self.rank == other.rank and self.lclId == other.lclId)
 
     def __ne__(self, other):
-        return self.rank != other.rank or self.lclId != other.lclId
+        return (type(self) != type(other) or self.rank != other.rank or self.lclId != other.lclId)
 
     def __gt__(self, other):
         return (self.rank > other.rank

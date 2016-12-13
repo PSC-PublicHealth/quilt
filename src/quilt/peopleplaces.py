@@ -301,8 +301,8 @@ class Person(patches.Agent):
                         self._loc = addr
                         self.locAddr = self.newLocAddr
                         if self.debug:
-                            self.logger.debug('%s point 6: arrive tier %s day %s'
-                                              % (self.name, self.ward.tier, timeNow))
+                            self.logger.debug('%s point 6: arrive at %s day %s'
+                                              % (self.name, self.loc._name, timeNow))
                     timeNow = addr.lock(self)
 
                 elif self.fsmstate == Person.STATE_JUSTARRIVED:
