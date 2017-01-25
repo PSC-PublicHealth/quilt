@@ -16,7 +16,6 @@
 ###################################################################################
 
 import sys
-import types
 from greenlet import greenlet
 from random import randint
 import logging
@@ -56,7 +55,7 @@ class Sequencer(object):
                 self._timeNow += 1
 
     def enqueue(self, agent, whenInfo=0):
-        assert isinstance(whenInfo, types.IntType), (('%s: cannot enqueue %s: time %s is'
+        assert isinstance(whenInfo, int), (('%s: cannot enqueue %s: time %s is'
                                                       ' not an integer')
                                                      % (self._name, agent.name, whenInfo))
         assert whenInfo >= self._timeNow, '%s: cannot schedule things in the past' % self._name
@@ -65,7 +64,7 @@ class Sequencer(object):
         self._timeQueues[whenInfo].append(agent)
 
     def unenqueue(self, agent, expectedWakeTime):
-        assert isinstance(expectedWakeTime, types.IntType), (('%s: cannot unenqueue %s: time %s'
+        assert isinstance(expectedWakeTime, int), (('%s: cannot unenqueue %s: time %s'
                                                               ' is not an integer')
                                                              % (self._name, agent.name,
                                                                  expectedWakeTime))
@@ -462,7 +461,7 @@ class MainLoop(greenlet):
         self.perEventCallbacks = []
         self.perDayCallbacks = []
         self.safety = safety  # After how many ticks to bail, if any
-        assert safety is None or isinstance(safety, types.IntType)
+        assert safety is None or isinstance(safety, int)
         if name is None:
             self.name = 'MainLoop'
         else:
@@ -518,17 +517,17 @@ class MainLoop(greenlet):
         return '%s exiting' % self.name
 
     def sleep(self, agent, nDays):
-        assert isinstance(nDays, types.IntType), 'nDays should be an integer'
+        assert isinstance(nDays, int), 'nDays should be an integer'
         assert nDays >= 0, 'No sleeping for negative time'
         self.sequencer.enqueue(agent, self.sequencer.getTimeNow() + nDays)
         return self.switch('%s: %s sleep %d days' % (self.name, agent, nDays))
 
     def printCensus(self, tickNum=None):
         if tickNum is None:
-            print '%s: Census at time %s:' % (self.name, self.sequencer.getTimeNow())
+            print('%s: Census at time %s:' % (self.name, self.sequencer.getTimeNow()))
         else:
-            print ('%s: Census at tick %s date %s:' %
-                   (self.name, tickNum, self.sequencer.getTimeNow()))
+            print('%s: Census at tick %s date %s:' %
+                  (self.name, tickNum, self.sequencer.getTimeNow()))
         censusDict = {}
         for iact in Interactant.getLiveList():
             for k, v in iact.getWaitingDetails().items():
@@ -536,17 +535,17 @@ class MainLoop(greenlet):
                     censusDict[k] += v
                 else:
                     censusDict[k] = v
-        print '    interactants contain: %s' % censusDict
-        print '    main loop live agents: %s' % self.sequencer.getWaitingCensus()
-        print ('    main loop tomorrow: %s' %
-               self.sequencer.getWaitingCensus(self.sequencer.getTimeNow() + 1))
+        print('    interactants contain: %s' % censusDict)
+        print('    main loop live agents: %s' % self.sequencer.getWaitingCensus())
+        print('    main loop tomorrow: %s' %
+              self.sequencer.getWaitingCensus(self.sequencer.getTimeNow() + 1))
 
     def __str__(self):
         return '<%s>' % self.name
 
 
 def describeSelf():
-    print """This main provides diagnostics. -v and -d for verbose and debug respectively."""
+    print("This main provides diagnostics. -v and -d for verbose and debug respectively.")
 
 
 def main():
@@ -561,16 +560,16 @@ def main():
         def run(self, startTime):
             timeNow = startTime
             while True:
-                print '%s new iter' % self
+                print('%s new iter' % self)
                 fate = randint(0, len(interactants))
                 if fate == len(interactants):
-                    print 'no lock for %s at %s' % (self.name, timeNow)
+                    print('no lock for %s at %s' % (self.name, timeNow))
                     timeNow = self.sleep(0)  # yield thread
                 else:
                     timeNow = interactants[fate].lock(self)
                     timeNow = self.sleep(1)
                     timeNow = interactants[fate].unlock(self)
-            return '%s is exiting' % self
+            return('%s is exiting' % self)
 
     for a in sys.argv[1:]:
         if a == '-v':
@@ -582,12 +581,12 @@ def main():
             sys.exit('unrecognized argument %s' % a)
 
     allAgents = []
-    for i in xrange(20000):
+    for i in range(20000):
         allAgents.append(TestAgent('Agent_%d' % i, mainLoop))
 
     mainLoop.addAgents(allAgents)
     mainLoop.switch()
-    print 'all done'
+    print('all done')
 
 ############
 # Main hook

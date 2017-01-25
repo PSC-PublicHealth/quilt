@@ -93,9 +93,7 @@ def createPerDayCB(patch, runDurationDays):
 
 
 def describeSelf():
-    print """
-    This main provides diagnostics. -t and -d for trace and debug respectively.
-    """
+    print("This main provides diagnostics. -t and -d for trace and debug respectively.")
 
 
 def main():
@@ -129,7 +127,7 @@ def main():
 
     patchGroup = patches.PatchGroup(comm, trace=trace, deterministic=deterministic)
     nPatches = 2
-    for j in xrange(nPatches):
+    for j in range(nPatches):
 
         patch = patches.Patch(patchGroup)
 
@@ -137,7 +135,7 @@ def main():
                                for nm in ['SubA', 'SubB', 'SubC']])
 
         allAgents = []
-        for i in xrange(1000):
+        for i in range(1000):
             debugThis = (i % 50 == 0)
             allAgents.append(TestAgent('Agent_%d_%d_%d' % (rank, j, i),
                                        patch, debug=debugThis))

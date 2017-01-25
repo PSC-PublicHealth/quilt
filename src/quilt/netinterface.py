@@ -19,7 +19,6 @@ _rhea_svn_id_ = "$Id$"
 
 from mpi4py import MPI
 import numpy as np
-import types
 from collections import namedtuple
 import logging
 
@@ -81,7 +80,7 @@ class GblAddr(_InnerGblAddr):
         return self.lclId
 
     def getPatchAddr(self):
-        if isinstance(self.lclId, types.TupleType):
+        if isinstance(self.lclId, tuple):
             return GblAddr(self.rank, self.lclId[0])
         else:
             return GblAddr(self.rank, self.lclId)
@@ -91,13 +90,13 @@ class GblAddr(_InnerGblAddr):
         """For those awkward times when the argument is really an _InnerGblAddr"""
         rank = tpl[0]
         lclId = tpl[1]
-        if isinstance(lclId, types.TupleType):
+        if isinstance(lclId, tuple):
             return GblAddr(rank, lclId[0])
         else:
             return GblAddr(rank, lclId)
 
     def __str__(self):
-        if isinstance(self.lclId, types.TupleType):
+        if isinstance(self.lclId, tuple):
             return '%d_%d_%d' % (self.rank, self.lclId[0], self.lclId[1])
         else:
             return '%d_%d' % (self.rank, self.lclId)
@@ -122,6 +121,15 @@ class GblAddr(_InnerGblAddr):
 
     def __ge__(self, other):
         return self > other or self == other
+
+    def __hash__(self):
+        """
+        MD: I'm not yet sure if it's a python 3 specific thing,
+        but objects that override equivalence functions won't hash with standard object hashing
+        Without this, I get a `TypeError: unhashable type: 'GblAddr'`
+        More research is required to see if this solution treats the disease or the symptom, however
+        """
+        return hash((self.rank, self.lclId))
 
 
 class NetworkInterface(object):
@@ -312,7 +320,7 @@ class NetworkInterface(object):
 
     def finishSend(self):
         sList = []
-        for i in xrange(len(self.outstandingSendReqs)):  # @UnusedVariable
+        for i in range(len(self.outstandingSendReqs)):  # @UnusedVariable
             sList.append(MPI.Status())
         logger.debug('netInterface rank %d enters send waitall' % self.comm.rank)
         MPI.Request.Waitall(self.outstandingSendReqs, statuses=sList)  # @UnusedVariable

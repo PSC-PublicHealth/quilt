@@ -111,7 +111,7 @@ class Agent(agent.Agent):
         self.ownerLoop = newPatch.loop
         self.parent = newPatch.loop
         self.patch = newPatch
-        # print '%s home is now %s' % (self, newPatch)
+        # print('%s home is now %s' % (self, newPatch))
 
 
 # class OmniClock(Agent):
@@ -141,10 +141,10 @@ class Agent(agent.Agent):
 #             self.win.Fence()
 #             gblTMin, gblTMax = self.getRange()
 #             if self.comm.rank == 0 and gblTMax - gblTMin > 1:
-#                 print '### Rank 0: global range diverged to (%d, %d) at time %d' % \
-#                     (gblTMin, gblTMax, timeNow)
+#                 print('### Rank 0: global range diverged to (%d, %d) at time %d' %
+#                       (gblTMin, gblTMax, timeNow))
 #             if gblTMax > 1000:
-#                 print 'rank %d: run complete' % self.comm.rank
+#                 print('rank %d: run complete' % self.comm.rank)
 #                 MPI.Finalize()
 #                 sys.exit(0)
 #             if self.comm.rank == 0:
@@ -502,13 +502,13 @@ class Patch(object):
         will return True; otherwise False.  Note that this condition can be reversed if
         a new agent is inserted into today's loop.
         """
-        for iact in (self.outgoingGateDict.values() + self.incomingGateDict.values()
-                     + self.interactantDict.values()):
-            if (iact._lockingAgent is not None and iact._lockingAgent.timeless
-                    and iact.getNWaiting()):
-                self.logger.debug('doneWithToday is false because %s has %d waiting: %s' %
-                                  (iact, iact.getNWaiting(), iact.getWaitingDetails()))
-                return False
+        for myDict in [self.outgoingGateDict, self.incomingGateDict, self.interactantDict]:
+            for iact in myDict.values():
+                if (iact._lockingAgent is not None and iact._lockingAgent.timeless
+                        and iact.getNWaiting()):
+                    self.logger.debug('doneWithToday is false because %s has %d waiting: %s' %
+                                      (iact, iact.getNWaiting(), iact.getWaitingDetails()))
+                    return False
         # Gates are not in interactantDict so we have not checked them, but they are timeless
         # by definition.
         return all([a.timeless for a in
@@ -589,7 +589,7 @@ def greenletTrace(event, args):
         # Note that callback is running in the context of target
         # greenlet and any exceptions will be passed as if
         # target.throw() was used instead of a switch.
-        print 'TRACE switch %s -> %s (parent %s)' % (origin, target, target.parent)
+        print('TRACE switch %s -> %s (parent %s)' % (origin, target, target.parent))
         return
     if event == 'throw':
         origin, target = args
@@ -597,7 +597,7 @@ def greenletTrace(event, args):
         # Note that callback is running in the context of target
         # greenlet and any exceptions will replace the original, as
         # if target.throw() was used with the replacing exception.
-        print 'TRACE throw %s -> %s' % (origin, target)
+        print('TRACE throw %s -> %s' % (origin, target))
         return
 
 
@@ -650,12 +650,12 @@ class PatchGroup(greenlet):
 
     @property
     def vclock(self):
-        print '!!!!!!!!!!!!!!!! is vclock needed globally?'
+        print('!!!!!!!!!!!!!!!! is vclock needed globally?')
         return self.nI.vclock
 
     @property
     def vtime(self):
-        print '!!!!!!!!!!!!!!!! is vtime needed globally?'
+        print('!!!!!!!!!!!!!!!! is vtime needed globally?')
         return self.nI.vclock.vec
 
     def barrier(self):

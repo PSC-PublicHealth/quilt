@@ -82,10 +82,10 @@ class FacilityManager(patches.Agent):
                             self.fac.wardDict[tier].append((w, n-1))
                             ward = w
                     if ward is None:
-                        # print '%s: no beds available for %s' % (self.name, req.name)
+                        # print('%s: no beds available for %s' % (self.name, req.name))
                         req.fsmstate = BedRequest.STATE_DENIEDWARD
                     else:
-                        # print '%s: found a bed for %s' % (self.name, req.name)
+                        # print('%s: found a bed for %s' % (self.name, req.name))
                         req.bedWard = ward.getGblAddr()
                         req.fsmstate = BedRequest.STATE_GOTWARD
                     self.fac.reqQueue.awaken(req)
@@ -100,7 +100,7 @@ class FacilityManager(patches.Agent):
                         raise RuntimeError("%s: I do not own the ward at %s" %
                                            self.name, self.wardAddr)
                     else:
-                        # print '%s: incremented ward %s' % (self.name, ward._name)
+                        # print('%s: incremented ward %s' % (self.name, ward._name))
                         pass
                     self.fac.reqQueue.awaken(req)
                 else:
@@ -276,8 +276,8 @@ class PatientAgent(patches.Agent):
                 assert self.ward is not None, \
                     ("%s: I should have been assigned to a ward" % self.name)
                 if self.ward.tier != self.careTier:
-                    print ('%s wants a tier %d ward at %s' %
-                           (self.name, self.careTier, timeNow))
+                    print('%s wants a tier %d ward at %s' %
+                          (self.name, self.careTier, timeNow))
                     facAddrList = [tpl[1] for tpl in self.patch.serviceLookup('BedRequestQueue')]
                     shuffle(facAddrList)
                     key = self.ward.fac.holdQueue.getUniqueKey()
@@ -286,10 +286,10 @@ class PatientAgent(patches.Agent):
                                                  facAddrList),
                                       timeNow)
                     timeNow = self.ward.fac.holdQueue.lock(self, key=key)
-                    # print '%s is awake with new addr %s!' % (self.name, self.newWardAddr)
+                    # print('%s is awake with new addr %s!' % (self.name, self.newWardAddr))
                     if self.newWardAddr is None:
                         # Nowhere to go; try again tomorrow
-                        print '%s is stuck here; going back to sleep' % self.name
+                        print('%s is stuck here; going back to sleep' % self.name)
                         timeNow = self.sleep(1)
                         self.fsmstate = PatientAgent.STATE_HEALED
                     else:
@@ -308,7 +308,7 @@ class PatientAgent(patches.Agent):
                 if final:
                     self.fsmstate = PatientAgent.STATE_ATWARD
                     self.ward = addr
-                    print '%s arrived at new ward %s' % (self.name, addr._name)
+                    print('%s arrived at new ward %s' % (self.name, addr._name))
                 timeNow = addr.lock(self)
 
     def __getstate__(self):
@@ -343,7 +343,7 @@ def createPerDayCB(patch, runDurationDays):
 
 
 def describeSelf():
-    print """This should write some documentation"""
+    print("This should write some documentation")
 
 
 def main():
@@ -372,7 +372,7 @@ def main():
 
     patchGroup = TestPatchGroup(comm, trace=trace, deterministic=deterministic)
     nPatches = 2
-    for j in xrange(nPatches):  # @UnusedVariable
+    for j in range(nPatches):  # @UnusedVariable
         patch = patchGroup.addPatch(TestPatch(patchGroup))
         facility = Facility('Facility_%s' % str(patch.patchId), patch)
         ward0 = facility.addWard(Ward('Ward_%s_Tier0' % str(patch.patchId), patch, 0, 1000))
@@ -381,7 +381,7 @@ def main():
         allItr = [facility.reqQueue, facility.holdQueue, ward0, ward1, ward2]
         allAgents = [facility.manager]
 
-        for i in xrange(10):
+        for i in range(10):
             a = PatientAgent('PatientAgent_%s_%d' % (patch.patchId, i),
                              patch, debug=debug)
             ward0.lock(a)
@@ -392,7 +392,7 @@ def main():
         patch.addAgents(allAgents)
         patch.loop.addPerDayCallback(createPerDayCB(patch, 365))
     patchGroup.start()
-    print '%s all done (from main)' % patchGroup.name
+    print('%s all done (from main)' % patchGroup.name)
 
 
 ############

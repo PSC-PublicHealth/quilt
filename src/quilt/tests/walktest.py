@@ -174,10 +174,10 @@ def createPerTickCB(patch, runDurationDays):
         assert isinstance(patch, MyPatch), 'You forgot to use MyPatch instances for patches'
         # Print the output terms from the last tick *before* the date change
         if timeNow != newTimeNow:
-            print 'time is %s -> %s' % (timeNow, newTimeNow)
+            print('time is %s -> %s' % (timeNow, newTimeNow))
             for nm, ct, altPop, nDead in patch.termsList[-2]:
-                print ('%s: %2d %2d %2d' % (nm, ct, altPop, nDead)),
-            print ""   # newline
+                print('%s: %2d %2d %2d' % (nm, ct, altPop, nDead)),
+            print("")   # newline
         terms = []
         for gp in patch.locGroups:
             terms.append((gp.name,
@@ -193,9 +193,7 @@ def createPerTickCB(patch, runDurationDays):
 
 
 def describeSelf():
-    print """
-    This main provides diagnostics. -t and -d for trace and debug respectively.
-    """
+    print("This main provides diagnostics. -t and -d for trace and debug respectively.")
 
 
 def main():
@@ -233,7 +231,7 @@ def main():
         seed(1234)
 
     patchGroup = patches.PatchGroup(comm, trace=trace, deterministic=deterministic)
-    for j in xrange(patchesPerRank):
+    for j in range(patchesPerRank):
 
         patch = MyPatch(patchGroup)
 
@@ -243,7 +241,7 @@ def main():
         for i, LocTp in enumerate(locTypeCycle):
             locGroup = LocGroup('Grp_%d_%d' % (j, i), patch)
             theseLocs = [LocTp('loc_%s_%d_%d_%d' % (LocTp.__name__, j, i, k), patch, locCapacity)
-                         for k in xrange(locsPerPatch)]
+                         for k in range(locsPerPatch)]
             locGroup.addLocs(theseLocs)
             locList.extend(theseLocs)
             itrList.extend(theseLocs + locGroup.getAllQueues())
@@ -251,7 +249,7 @@ def main():
         patch.addInteractants(itrList)
         patch.addAgents([gp.manager for gp in groupList])
         agentList = []
-        for i in xrange(agentsPerPatch):
+        for i in range(agentsPerPatch):
             agentList.append(Walker('walker_%d_%d' % (j, i), patch, choice(locList)))
         patch.addAgents(agentList)
 
