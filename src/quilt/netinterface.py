@@ -97,7 +97,7 @@ class GblAddr(_InnerGblAddr):
 
     def __str__(self):
         if isinstance(self.lclId, tuple):
-            return '%d_%d_%d' % (self.rank, self.lclId[0], self.lclId[1])
+            return "{0}_{1}_{2}".format(self.rank, self.lclId[0], self.lclId[1])
         else:
             return '%d_%d' % (self.rank, self.lclId)
 
