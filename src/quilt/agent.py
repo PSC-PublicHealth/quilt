@@ -16,10 +16,12 @@
 ###################################################################################
 
 import sys
+import logging
+
 from greenlet import greenlet
 from random import randint
-import logging
-import weaklist
+
+import quilt.weaklist as weaklist
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())

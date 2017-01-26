@@ -17,10 +17,11 @@
 
 _rhea_svn_id_ = "$Id$"
 
-from mpi4py import MPI
-import numpy as np
-from collections import namedtuple
 import logging
+import numpy as np
+
+from mpi4py import MPI
+from collections import namedtuple
 
 logger = logging.getLogger(__name__)
 

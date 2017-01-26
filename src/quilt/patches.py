@@ -21,9 +21,9 @@ from collections import defaultdict
 import logging
 from greenlet import greenlet
 
-import netinterface
+import quilt.netinterface as netinterface
 # from pympler import tracker
-import agent
+import quilt.agent as agent
 
 logger = logging.getLogger(__name__)
 
