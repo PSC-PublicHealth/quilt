@@ -355,7 +355,7 @@ class DateChangeAgent(Agent):
         self.inputQueue = DateChangeQueue(name+'_rQ', patch)
         self.inputQueue.lock(self)
         self.counter = 0
-        self.mostRecentBusyVTime = None
+        self.mostRecentBusyVTime = self.patch.group.nI.vclock.copy()
         self.msgDict = {}
         self.logger = logging.getLogger(__name__ + '.DateChangeAgent')
 
@@ -363,102 +363,105 @@ class DateChangeAgent(Agent):
         timeNow = startTime
         logDebug = self.logger.isEnabledFor(logging.DEBUG)
         while True:
-            dWT = self.patch.doneWithToday()
-            bumpTime = False
-            if logDebug:
-                self.logger.debug('%s: dWT is %s; %d in queue' %
-                                  (self.name, dWT, len(self.inputQueue._lockQueue)))
-            if dWT:
-                nInGroup = 0
-                for nm, destAddr in self.patch.serviceLookup('DateChangeQueue'):
-                    if not self.patch.isLocal(destAddr):
-                        newMsg = DateChangeMsg('%s_msg_%s_%d' % (self.name, nm, self.counter),
-                                               self.patch, self.inputQueue.getGblAddr(),
-                                               destAddr, self.patch.group.nI.vclock.copy(),
-                                               timeNow)
-                        self.counter += 1
-                        nInGroup += 1
-                        self.patch.launch(newMsg, timeNow)
-                if nInGroup > 0:
-                    tickNow = self.patch.group.nI.vclock.vec[self.patch.group.nI.comm.rank]
-                    self.msgDict[tickNow] = (nInGroup, 0)
-                    if logDebug:
-                        self.logger.debug('%s spawned and launched %d' % (self.name, nInGroup))
-                else:
-                    bumpTime = True  # we are alone, so just change date
-            else:
-                self.mostRecentBusyVTime = self.patch.group.nI.vclock.copy()
-            while self.inputQueue._lockQueue:
-                msg = self.inputQueue._lockQueue[0]
+            if not self.patch.readyForNextTimeStep:
+                dWT = self.patch.doneWithToday()
+                bumpTime = False
                 if logDebug:
-                    self.logger.debug('%s found %s in input queue' % (self.name, msg.name))
-                if isinstance(msg, DateChangeMsg):
-                    if msg.homeQueueAddr == self.inputQueue.getGblAddr():
+                    self.logger.debug('%s: dWT is %s; %d in queue' %
+                                      (self.name, dWT, len(self.inputQueue._lockQueue)))
+                if dWT:
+                    nInGroup = 0
+                    for nm, destAddr in self.patch.serviceLookup('DateChangeQueue'):
+                        if not self.patch.isLocal(destAddr):
+                            newMsg = DateChangeMsg('%s_msg_%s_%d' % (self.name, nm, self.counter),
+                                                   self.patch, self.inputQueue.getGblAddr(),
+                                                   destAddr, self.patch.group.nI.vclock.copy(),
+                                                   timeNow)
+                            self.counter += 1
+                            nInGroup += 1
+                            self.patch.launch(newMsg, timeNow)
+                    if nInGroup > 0:
+                        tickNow = self.patch.group.nI.vclock.vec[self.patch.group.nI.comm.rank]
+                        self.msgDict[tickNow] = (nInGroup, 0)
                         if logDebug:
-                            self.logger.debug('DateChangeMsg %s made it home!'
-                                              ' Started %s %s, now %s %s'
-                                              % (msg.name, msg.creationVTime, msg.creationDate,
-                                                 self.patch.group.nI.vclock, timeNow))
-                        msgTick = msg.creationVTime.vec[self.patch.group.nI.comm.rank]
-                        if logDebug:
-                            self.logger.debug('%s: dWT = %s, msgDict %s' %
-                                              (self.name, dWT, self.msgDict))
-                        if dWT and msgTick in self.msgDict:
-                            nSent, nSeen = self.msgDict[msgTick]
+                            self.logger.debug('%s spawned and launched %d' % (self.name, nInGroup))
+                    else:
+                        bumpTime = True  # we are alone, so just change date
+                else:
+                    self.mostRecentBusyVTime = self.patch.group.nI.vclock.copy()
+                while self.inputQueue._lockQueue:
+                    msg = self.inputQueue._lockQueue[0]
+                    if logDebug:
+                        self.logger.debug('%s found %s in input queue' % (self.name, msg.name))
+                    if isinstance(msg, DateChangeMsg):
+                        if msg.homeQueueAddr == self.inputQueue.getGblAddr():
                             if logDebug:
-                                self.logger.debug('%s considering date change' % self.name)
-                            if (msg.creationVTime.before(self.patch.group.nI.vclock)
+                                self.logger.debug('DateChangeMsg %s made it home!'
+                                                  ' Started %s %s, now %s %s'
+                                                  % (msg.name, msg.creationVTime, msg.creationDate,
+                                                     self.patch.group.nI.vclock, timeNow))
+                            msgTick = msg.creationVTime.vec[self.patch.group.nI.comm.rank]
+                            if logDebug:
+                                self.logger.debug('%s: dWT = %s, msgDict %s' %
+                                                  (self.name, dWT, self.msgDict))
+                            if dWT and msgTick in self.msgDict:
+                                nSent, nSeen = self.msgDict[msgTick]
+                                if logDebug:
+                                    self.logger.debug('%s considering date change' % self.name)
+                                if (msg.creationVTime.before(self.patch.group.nI.vclock)
                                     and msg.creationDate == timeNow
                                     and self.mostRecentBusyVTime.before(msg.creationVTime)):
-                                nSeen += 1
-                                if logDebug:
-                                    self.logger.debug('%s counted date change '
-                                                      'msg %d of %d for tick %s' %
-                                                      (self.name, nSeen, nSent, msgTick))
-                                if nSeen >= nSent:
+                                    nSeen += 1
                                     if logDebug:
-                                        self.logger.debug('%s will bump time' % self.name)
-                                    bumpTime = True
-                                    self.msgDict = {}
+                                        self.logger.debug('%s counted date change '
+                                                          'msg %d of %d for tick %s' %
+                                                          (self.name, nSeen, nSent, msgTick))
+                                    if nSeen >= nSent:
+                                        if logDebug:
+                                            self.logger.debug('%s will bump time' % self.name)
+                                        bumpTime = True
+                                        self.msgDict = {}
+                                    else:
+                                        self.msgDict[msgTick] = (nSent, nSeen)
                                 else:
-                                    self.msgDict[msgTick] = (nSent, nSeen)
+                                    if logDebug:
+                                        self.logger.debug('%s: change rejected: %s %s %s' %
+                                                          (self.name,
+                                                           msg.creationVTime.before(self.patch.group
+                                                                                    .nI.vclock),
+                                                           msg.creationDate == timeNow,
+                                                           self.mostRecentBusyVTime
+                                                           .before(msg.creationVTime)))
+                                    del self.msgDict[msgTick]
+                                msg.fsmstate = DateChangeMsg.STATE_TERMINATE
+                                self.inputQueue.awaken(msg)
                             else:
                                 if logDebug:
-                                    self.logger.debug('%s: change rejected: %s %s %s' %
-                                                      (self.name,
-                                                       msg.creationVTime.before(self.patch.group
-                                                                                .nI.vclock),
-                                                       msg.creationDate == timeNow,
-                                                       self.mostRecentBusyVTime
-                                                       .before(msg.creationVTime)))
-                                del self.msgDict[msgTick]
-                            msg.fsmstate = DateChangeMsg.STATE_TERMINATE
-                            self.inputQueue.awaken(msg)
+                                    self.logger.debug('%s missed chance for date change' % self.name)
+                                msg.fsmstate = DateChangeMsg.STATE_TERMINATE
+                                self.inputQueue.awaken(msg)
                         else:
-                            if logDebug:
-                                self.logger.debug('%s missed chance for date change' % self.name)
-                            msg.fsmstate = DateChangeMsg.STATE_TERMINATE
-                            self.inputQueue.awaken(msg)
-                    else:
-                        if ((dWT and msg.creationDate == timeNow)
+                            if ((dWT and msg.creationDate == timeNow)
                                 or msg.creationDate < timeNow):
-                            if logDebug:
-                                self.logger.debug('%s Passing %s forward' % (self.name, msg.name))
-                            msg.fsmstate = DateChangeMsg.STATE_HOMEWARD
-                            self.inputQueue.awaken(msg)
-                        else:
-                            if logDebug:
-                                self.logger.debug('%s canceling %s: %s %d %d' %
-                                                  (self.name, msg.name, dWT, msg.creationDate,
-                                                   timeNow))
-                            msg.fsmstate = DateChangeMsg.STATE_TERMINATE
-                            self.inputQueue.awaken(msg)
-                else:
-                    raise RuntimeError("%s unexpectedly got the message %s" %
-                                       (self.name, msg.name))
-            if bumpTime:
-                self.logger.debug('%s BUMPING TIME' % self.name)
-                self.patch.loop.sequencer.bumpTime()
+                                if logDebug:
+                                    self.logger.debug('%s Passing %s forward' % (self.name, msg.name))
+                                msg.fsmstate = DateChangeMsg.STATE_HOMEWARD
+                                self.inputQueue.awaken(msg)
+                            else:
+                                if logDebug:
+                                    self.logger.debug('%s canceling %s: %s %d %d' %
+                                                      (self.name, msg.name, dWT, msg.creationDate,
+                                                       timeNow))
+                                msg.fsmstate = DateChangeMsg.STATE_TERMINATE
+                                self.inputQueue.awaken(msg)
+                    else:
+                        raise RuntimeError("%s unexpectedly got the message %s" %
+                                           (self.name, msg.name))
+                if bumpTime:
+                    # self.logger.debug('%s BUMPING TIME' % self.name)
+                    # self.patch.loop.sequencer.bumpTime()
+                    self.patch.readyForNextTimeStep = True
+
             timeNow = self.sleep(0)
 
 
@@ -467,7 +470,7 @@ class Patch(object):
 
     def _createPerTickCB(self):
         def tickFun(thisAgent, timeLastTick, timeNow):
-            # Force the current patch to exit so that the next patch gets
+            # Horse the current patch to exit so that the next patch gets
             # a time slice.
             thisAgent.ownerLoop.sequencer.enqueue(thisAgent, timeNow)
             self.group.switch(timeNow)
@@ -496,19 +499,22 @@ class Patch(object):
         self.addAgents([self.gateAgent, self.dateChangeAgent])
         self.addInteractants([self.dateChangeAgent.inputQueue])
 
+        #
+        self.readyForNextTimeStep = False
+
     def doneWithToday(self):
         """
         If the only agents still in today's sequencer loop are marked 'timeless', this
         will return True; otherwise False.  Note that this condition can be reversed if
         a new agent is inserted into today's loop.
         """
-        for myDict in [self.outgoingGateDict, self.incomingGateDict, self.interactantDict]:
-            for iact in myDict.values():
-                if (iact._lockingAgent is not None and iact._lockingAgent.timeless
-                        and iact.getNWaiting()):
-                    self.logger.debug('doneWithToday is false because %s has %d waiting: %s' %
-                                      (iact, iact.getNWaiting(), iact.getWaitingDetails()))
-                    return False
+        # MD the joy of python 3 dict.keys() and dict.values not returning lists for whatever reason
+        for iact in (list(self.outgoingGateDict.values()) + list(self.incomingGateDict.values()) + list(self.interactantDict.values())):
+            if (iact._lockingAgent is not None and iact._lockingAgent.timeless
+                    and iact.getNWaiting()):
+                self.logger.debug('doneWithToday is false because %s has %d waiting: %s' %
+                                  (iact, iact.getNWaiting(), iact.getWaitingDetails()))
+                return False
         # Gates are not in interactantDict so we have not checked them, but they are timeless
         # by definition.
         return all([a.timeless for a in
@@ -689,6 +695,12 @@ class PatchGroup(greenlet):
                 if self.printCensus:
                     p.loop.printCensus(tickNum=self.nI.vclock.vec[self.nI.comm.rank])
 
+            # Check if all patches are done for the day.
+            # If so, bump all of them to the next day.
+            # If not, continue until all patches are done for the day
+            if self.allPatchesreadyForNextTimeStep():
+                self.bumpAllPatchesTime()
+
             if logDebug:
                 self.logger.debug('%s: finish last recv' % self.name)
             self.nI.finishRecv()
@@ -708,6 +720,14 @@ class PatchGroup(greenlet):
             self.nI.startSend()
             if logDebug:
                 self.logger.debug('%s: finished networking' % self.name)
+
+    def allPatchesreadyForNextTimeStep(self):
+        return all(p.readyForNextTimeStep for p in self.patches)
+
+    def bumpAllPatchesTime(self):
+        for p in self.patches[:]:
+            p.loop.sequencer.bumpTime()
+            p.readyForNextTimeStep = False
 
     def __str__(self):
         return '<%s>' % self.name
