@@ -433,6 +433,9 @@ class MainLoop(greenlet):
             self.timeless = True
 
         def run(self, timeNow):
+            if self.ownerLoop.runStartCallback is not None:
+                self.ownerLoop.runStartCallback(self.ownerLoop)
+
             while True:
                 if not self.ownerLoop.dateFrozen:
                     if self.ownerLoop.sequencer.doneWithToday():
@@ -462,6 +465,7 @@ class MainLoop(greenlet):
         self.perTickCallbacks = []
         self.perEventCallbacks = []
         self.perDayCallbacks = []
+        self.runStartCallback = None
         self.safety = safety  # After how many ticks to bail, if any
         assert safety is None or isinstance(safety, int)
         if name is None:
@@ -493,6 +497,9 @@ class MainLoop(greenlet):
 
     def addPerEventCallback(self, cb):
         self.perEventCallbacks.append(cb)
+
+    def addRunStartCallback(self, cb):
+        self.runStartCallback = cb
 
     def freezeDate(self):
         self.dateFrozen = True
@@ -539,8 +546,7 @@ class MainLoop(greenlet):
                     censusDict[k] = v
         print('    interactants contain: %s' % censusDict)
         print('    main loop live agents: %s' % self.sequencer.getWaitingCensus())
-        print('    main loop tomorrow: %s' %
-              self.sequencer.getWaitingCensus(self.sequencer.getTimeNow() + 1))
+        print('    main loop tomorrow: %s' % self.sequencer.getWaitingCensus(self.sequencer.getTimeNow() + 1))
 
     def __str__(self):
         return '<%s>' % self.name
