@@ -16,7 +16,7 @@
 ###################################################################################
 
 import logging
-import patches
+import quilt.patches as patches
 
 logger = logging.getLogger(__name__)
 
