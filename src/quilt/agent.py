@@ -38,10 +38,11 @@ except:
 
 class Sequencer(object):
 
-    def __init__(self, name):
+    def __init__(self, name, checkpointer=None):
         self._timeQueues = {}
         self._timeNow = 0
         self._name = name
+        self.checkpointer = checkpointer
         self._logger = logging.getLogger(__name__ + '.Sequencer')
 
     def __iter__(self):
@@ -53,6 +54,8 @@ class Sequencer(object):
                 if self._timeNow in self._timeQueues:
                     del self._timeQueues[self._timeNow]
                 self._timeNow += 1
+                if self.checkpointer is not None:
+                    self.checkpointer.checkpoint(self._timeNow)
 
     def enqueue(self, agent, whenInfo=0):
         assert isinstance(whenInfo, int), (('%s: cannot enqueue %s: time %s is'
@@ -119,6 +122,8 @@ class Sequencer(object):
         oldDay = self._timeQueues[self._timeNow]
         del self._timeQueues[self._timeNow]
         self._timeNow += 1
+        if self.checkpointer is not None:
+            self.checkpointer.checkpoint(self._timeNow)
         if self._timeNow not in self._timeQueues:
             self._timeQueues[self._timeNow] = []
         self._timeQueues[self._timeNow].extend(oldDay)
@@ -455,7 +460,7 @@ class MainLoop(greenlet):
     def everyDayCB(loop, timeNow):
         loop.logger.debug('%s: time is now %s' % (loop.name, timeNow))
 
-    def __init__(self, name=None, safety=None):
+    def __init__(self, name=None, safety=None, checkpointer=None):
         self.newAgents = [MainLoop.ClockAgent(self)]
         self.perTickCallbacks = []
         self.perEventCallbacks = []
@@ -466,7 +471,7 @@ class MainLoop(greenlet):
             self.name = 'MainLoop'
         else:
             self.name = name
-        self.sequencer = Sequencer(self.name + ".Sequencer")
+        self.sequencer = Sequencer(self.name + ".Sequencer", checkpointer)
         self.dateFrozen = False
         self.counter = 0
         self.addPerDayCallback(MainLoop.everyDayCB)
