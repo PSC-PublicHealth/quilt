@@ -353,7 +353,7 @@ class MultiInteractant(Interactant):
         """
         Interactant.__init__(self, name, ownerLoop, debug)
         self._nLocks = count
-        self._lockingAgentList = []
+        self._lockingAgentList = set()
         self._debug = debug
 
     def lock(self, lockingAgent):
@@ -367,7 +367,7 @@ class MultiInteractant(Interactant):
                 logger.debug('%s already locked by %s' % (self._name, lockingAgent))
             return timeNow
         elif len(self._lockingAgentList) < self._nLocks:
-            self._lockingAgentList.append(lockingAgent)
+            self._lockingAgentList.add(lockingAgent)
             if self._debug or lockingAgent.debug:
                 logger.debug('%s fast locked by %s' % (self._name, lockingAgent))
             return timeNow
@@ -399,7 +399,7 @@ class MultiInteractant(Interactant):
             if self._debug:
                 logger.debug('%s unlock of %s awakens %s (%d still in queue)' %
                              (self._name, oldLockingAgent, newAgent, self._nEnqueued))
-            self._lockingAgentList.append(newAgent)
+            self._lockingAgentList.add(newAgent)
             self._ownerLoop.sequencer.enqueue(newAgent, timeNow)
             self._ownerLoop.sequencer.enqueue(oldLockingAgent, timeNow)
             timeNow = self._ownerLoop.switch("%s and %s enqueued" % (newAgent, oldLockingAgent))
