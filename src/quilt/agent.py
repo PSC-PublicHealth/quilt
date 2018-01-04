@@ -16,6 +16,7 @@
 ###################################################################################
 
 import sys
+from collections import deque
 from greenlet import greenlet
 from random import randint
 import logging
@@ -49,7 +50,7 @@ class Sequencer(object):
         while self._timeQueues:
             todayQueue = self._timeQueues[self._timeNow]
             if todayQueue:
-                yield (todayQueue.pop(0), self._timeNow)
+                yield (todayQueue.popleft(), self._timeNow)
             else:
                 if self._timeNow in self._timeQueues:
                     del self._timeQueues[self._timeNow]
@@ -63,7 +64,7 @@ class Sequencer(object):
                                                      % (self._name, agent.name, whenInfo))
         assert whenInfo >= self._timeNow, '%s: cannot schedule things in the past' % self._name
         if whenInfo not in self._timeQueues:
-            self._timeQueues[whenInfo] = []
+            self._timeQueues[whenInfo] = deque()
         self._timeQueues[whenInfo].append(agent)
 
     def unenqueue(self, agent, expectedWakeTime):
@@ -125,7 +126,7 @@ class Sequencer(object):
         if self.checkpointer is not None:
             self.checkpointer.checkpoint(self._timeNow)
         if self._timeNow not in self._timeQueues:
-            self._timeQueues[self._timeNow] = []
+            self._timeQueues[self._timeNow] = deque()
         self._timeQueues[self._timeNow].extend(oldDay)
 
     def doneWithToday(self):
