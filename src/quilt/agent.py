@@ -354,7 +354,7 @@ class MultiInteractant(Interactant):
         """
         Interactant.__init__(self, name, ownerLoop, debug)
         self._nLocks = count
-        self._lockingAgentList = set()
+        self._lockingAgentSet = set()
         self._debug = debug
 
     def lock(self, lockingAgent):
@@ -363,12 +363,12 @@ class MultiInteractant(Interactant):
         'count' agents to lock the interactant remain active.
         """
         timeNow = self._ownerLoop.sequencer.getTimeNow()
-        if lockingAgent in self._lockingAgentList:
+        if lockingAgent in self._lockingAgentSet:
             if self._debug or lockingAgent.debug:
                 logger.debug('%s already locked by %s' % (self._name, lockingAgent))
             return timeNow
-        elif len(self._lockingAgentList) < self._nLocks:
-            self._lockingAgentList.add(lockingAgent)
+        elif len(self._lockingAgentSet) < self._nLocks:
+            self._lockingAgentSet.add(lockingAgent)
             if self._debug or lockingAgent.debug:
                 logger.debug('%s fast locked by %s' % (self._name, lockingAgent))
             return timeNow
@@ -389,10 +389,10 @@ class MultiInteractant(Interactant):
         assert oldLockingAgent == greenlet.getcurrent(), ('%s unlock of %s with current thread %s'
                                                           % (self._name, oldLockingAgent.name,
                                                              greenlet.getcurrent().name))
-        if oldLockingAgent not in self._lockingAgentList:
+        if oldLockingAgent not in self._lockingAgentSet:
             raise RuntimeError('%s is not a lock of %s' % (oldLockingAgent, self._name))
         timeNow = self._ownerLoop.sequencer.getTimeNow()
-        self._lockingAgentList.remove(oldLockingAgent)
+        self._lockingAgentSet.remove(oldLockingAgent)
         if self._lockQueue:
             newAgent = self._lockQueue.pop(0)
             if not newAgent.timeless:
@@ -400,7 +400,7 @@ class MultiInteractant(Interactant):
             if self._debug:
                 logger.debug('%s unlock of %s awakens %s (%d still in queue)' %
                              (self._name, oldLockingAgent, newAgent, self._nEnqueued))
-            self._lockingAgentList.add(newAgent)
+            self._lockingAgentSet.add(newAgent)
             self._ownerLoop.sequencer.enqueue(newAgent, timeNow)
             self._ownerLoop.sequencer.enqueue(oldLockingAgent, timeNow)
             timeNow = self._ownerLoop.switch("%s and %s enqueued" % (newAgent, oldLockingAgent))
@@ -410,14 +410,21 @@ class MultiInteractant(Interactant):
         return timeNow
 
     def isLocked(self, agent):
-        return (agent in self._lockingAgentList or agent in self._lockQueue)
+        return (agent in self._lockingAgentSet or agent in self._lockQueue)
 
     def __str__(self):
-        return '<%s (%d of %d)>' % (self._name, len(self._lockingAgentList), self._nLocks)
+        return '<%s (%d of %d)>' % (self._name, len(self._lockingAgentSet), self._nLocks)
 
     @property
     def nFree(self):
-        return self._nLocks - len(self._lockingAgentList)
+        return self._nLocks - len(self._lockingAgentSet)
+
+    def getLiveLockedAgents(self):
+        return list(self._lockingAgentSet)
+    
+    @property
+    def lockingAgentSet(self):
+        return self._lockingAgentSet
 
 
 def _clockAgentBreakHook(clockAgent):
