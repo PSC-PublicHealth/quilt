@@ -73,6 +73,15 @@ class LocType6(LocTypeBase):
 locTypeCycle = [LocType0, LocType1, LocType2, LocType3, LocType4, LocType5, LocType6]
 
 
+class FutureTestMsg(peopleplaces.FutureMsg):
+    idCounter = 0
+    @classmethod
+    def nextId(cls):
+        rslt = cls.idCounter
+        cls.idCounter += 1
+        return rslt
+
+
 class Walker(peopleplaces.Person):
     def getNewLocAddr(self, timeNow):
         """
@@ -138,9 +147,13 @@ class LocManager(peopleplaces.Manager):
     pass
 
 
+class LocManagerReqQueue(peopleplaces.RequestQueue):
+    pass
+
+
 class LocGroup(peopleplaces.ManagementBase):
     def __init__(self, name, patch):
-        super(LocGroup, self).__init__(name, patch, LocManager)
+        super(LocGroup, self).__init__(name, patch, LocManager, reqQueueClasses=[LocManagerReqQueue])
         self.locs = []
         self.altPop = 0
         self.nDead = 0
@@ -150,6 +163,26 @@ class LocGroup(peopleplaces.ManagementBase):
         for loc in locList:
             loc.grp = self
 
+    def handleIncomingMsg(self, msgType, payload, timeNow):
+        if issubclass(msgType, peopleplaces.ArrivalMsg):
+            # Maybe let this trigger a FutureMsg
+            if random() <= 0.1:
+                ptch = self.manager.patch
+                facAddrList = [tpl[1] for tpl in ptch.serviceLookup(LocManagerReqQueue.__name__)]
+                newAddr = choice(facAddrList)
+                delay = choice([1, 2, 3])
+                tstMsg = FutureTestMsg(self.name + ('_futureMsg_%d' % FutureTestMsg.nextId()),
+                                       ptch,
+                                       ('hello from %s at %s + delay %s'
+                                        % (self.name, timeNow, delay)),
+                                       newAddr,
+                                       timeNow + delay,
+                                       debug=True)
+                ptch.launch(tstMsg, timeNow)
+        elif issubclass(msgType, FutureTestMsg):
+            logger.info('Msg from the past at %s %s: %s', self.name, timeNow, payload)
+        timeNow = super(LocGroup, self).handleIncomingMsg(msgType, payload, timeNow)
+        return timeNow
 
 class MyPatch(patches.Patch):
     """
@@ -239,8 +272,8 @@ def main():
         itrList = []
         groupList = []
         for i, LocTp in enumerate(locTypeCycle):
-            locGroup = LocGroup('Grp_%d_%d' % (j, i), patch)
-            theseLocs = [LocTp('loc_%s_%d_%d_%d' % (LocTp.__name__, j, i, k), patch, locCapacity)
+            locGroup = LocGroup('Grp_%d_%d_%d' % (rank, j, i), patch)
+            theseLocs = [LocTp('loc_%s_%d_%d_%d_%d' % (LocTp.__name__, rank, j, i, k), patch, locCapacity)
                          for k in range(locsPerPatch)]
             locGroup.addLocs(theseLocs)
             locList.extend(theseLocs)

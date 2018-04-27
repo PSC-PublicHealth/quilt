@@ -143,6 +143,43 @@ class DepartureMsg(SimpleMsg):
     pass
 
 
+class FutureMsg(SimpleMsg):
+    """A message guaranteed to arrive in the future, rather than "now"."""
+
+    def __init__(self, name, patch, payload, destAddr, arrivalTime, debug=False):
+        super(FutureMsg, self).__init__(name, patch, payload, destAddr, debug=debug)
+        self.arrivalTime = arrivalTime
+
+    def run(self, startTime):
+        assert self.arrivalTime > startTime, "This FutureMsg is not going to the future"
+        timeNow = startTime  # @UnusedVariable
+        while True:
+            if self.fsmstate == self.STATE_MOVING:
+                addr, final = self.patch.getPathTo(self.destAddr)
+                if final:
+                    self.fsmstate = self.STATE_ARRIVED
+                else:
+                    timeNow = addr.lock(self)  # @UnusedVariable
+                    if timeNow < self.arrivalTime:
+                        timeNow = self.sleep(1)
+            elif self.fsmstate == self.STATE_ARRIVED:
+                if timeNow < self.arrivalTime:
+                    timeNow = self.sleep(self.arrivalTime - timeNow)
+                timeNow = addr.lock(self)
+                break  # we are done
+            else:
+                raise RuntimeError('unknown state %s' % self.fsmstate)
+
+    def __getstate__(self):
+        d = SimpleMsg.__getstate__(self)
+        d['arrivalTime'] = self.arrivalTime
+        return d
+
+    def __setstate__(self, stateDict):
+        SimpleMsg.__setstate__(self, stateDict)
+        self.arrivalTime = stateDict['arrivalTime']
+
+
 class RequestQueue(patches.Interactant):
     pass
 
