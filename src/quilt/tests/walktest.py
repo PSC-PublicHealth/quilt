@@ -40,7 +40,7 @@ class LocTypeBase(peopleplaces.Location):
         return self.grp.reqQueues[0].getGblAddr()
 
     def getNClients(self):
-        return len(self._lockingAgentList)
+        return len(self._lockingAgentSet)
 
 
 class LocType0(LocTypeBase):

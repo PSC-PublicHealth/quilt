@@ -476,7 +476,7 @@ class Patch(object):
             self.group.switch(timeNow)
         return tickFun
 
-    def __init__(self, group, name=None, patchId=None):
+    def __init__(self, group, name=None, patchId=None, checkpointer=None):
         if patchId is None:
             self.patchId = Patch.counter
             Patch.counter += 1
@@ -489,7 +489,7 @@ class Patch(object):
         else:
             self.name = name
         self.logger = logging.getLogger(__name__ + '.Patch')
-        self.loop = agent.MainLoop(self.name + '.loop')
+        self.loop = agent.MainLoop(self.name + '.loop', checkpointer=checkpointer)
         self.gateAgent = GateAgent(self)
         self.dateChangeAgent = DateChangeAgent(self.name + '_DateChangeAgent', self)
         self.outgoingGateDict = {}

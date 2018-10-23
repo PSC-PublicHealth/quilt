@@ -16,6 +16,7 @@
 ###################################################################################
 
 import sys
+from collections import deque
 import logging
 
 from greenlet import greenlet
@@ -40,21 +41,24 @@ except:
 
 class Sequencer(object):
 
-    def __init__(self, name):
+    def __init__(self, name, checkpointer=None):
         self._timeQueues = {}
         self._timeNow = 0
         self._name = name
+        self.checkpointer = checkpointer
         self._logger = logging.getLogger(__name__ + '.Sequencer')
 
     def __iter__(self):
         while self._timeQueues:
             todayQueue = self._timeQueues[self._timeNow]
             if todayQueue:
-                yield (todayQueue.pop(0), self._timeNow)
+                yield (todayQueue.popleft(), self._timeNow)
             else:
                 if self._timeNow in self._timeQueues:
                     del self._timeQueues[self._timeNow]
                 self._timeNow += 1
+                if self.checkpointer is not None:
+                    self.checkpointer.checkpoint(self._timeNow)
 
     def enqueue(self, agent, whenInfo=0):
         assert isinstance(whenInfo, int), (('%s: cannot enqueue %s: time %s is'
@@ -62,7 +66,7 @@ class Sequencer(object):
                                                      % (self._name, agent.name, whenInfo))
         assert whenInfo >= self._timeNow, '%s: cannot schedule things in the past' % self._name
         if whenInfo not in self._timeQueues:
-            self._timeQueues[whenInfo] = []
+            self._timeQueues[whenInfo] = deque()
         self._timeQueues[whenInfo].append(agent)
 
     def unenqueue(self, agent, expectedWakeTime):
@@ -121,8 +125,10 @@ class Sequencer(object):
         oldDay = self._timeQueues[self._timeNow]
         del self._timeQueues[self._timeNow]
         self._timeNow += 1
+        if self.checkpointer is not None:
+            self.checkpointer.checkpoint(self._timeNow)
         if self._timeNow not in self._timeQueues:
-            self._timeQueues[self._timeNow] = []
+            self._timeQueues[self._timeNow] = deque()
         self._timeQueues[self._timeNow].extend(oldDay)
 
     def doneWithToday(self):
@@ -350,7 +356,7 @@ class MultiInteractant(Interactant):
         """
         Interactant.__init__(self, name, ownerLoop, debug)
         self._nLocks = count
-        self._lockingAgentList = []
+        self._lockingAgentSet = set()
         self._debug = debug
 
     def lock(self, lockingAgent):
@@ -359,12 +365,12 @@ class MultiInteractant(Interactant):
         'count' agents to lock the interactant remain active.
         """
         timeNow = self._ownerLoop.sequencer.getTimeNow()
-        if lockingAgent in self._lockingAgentList:
+        if lockingAgent in self._lockingAgentSet:
             if self._debug or lockingAgent.debug:
                 logger.debug('%s already locked by %s' % (self._name, lockingAgent))
             return timeNow
-        elif len(self._lockingAgentList) < self._nLocks:
-            self._lockingAgentList.append(lockingAgent)
+        elif len(self._lockingAgentSet) < self._nLocks:
+            self._lockingAgentSet.add(lockingAgent)
             if self._debug or lockingAgent.debug:
                 logger.debug('%s fast locked by %s' % (self._name, lockingAgent))
             return timeNow
@@ -385,10 +391,10 @@ class MultiInteractant(Interactant):
         assert oldLockingAgent == greenlet.getcurrent(), ('%s unlock of %s with current thread %s'
                                                           % (self._name, oldLockingAgent.name,
                                                              greenlet.getcurrent().name))
-        if oldLockingAgent not in self._lockingAgentList:
+        if oldLockingAgent not in self._lockingAgentSet:
             raise RuntimeError('%s is not a lock of %s' % (oldLockingAgent, self._name))
         timeNow = self._ownerLoop.sequencer.getTimeNow()
-        self._lockingAgentList.remove(oldLockingAgent)
+        self._lockingAgentSet.remove(oldLockingAgent)
         if self._lockQueue:
             newAgent = self._lockQueue.pop(0)
             if not newAgent.timeless:
@@ -396,7 +402,7 @@ class MultiInteractant(Interactant):
             if self._debug:
                 logger.debug('%s unlock of %s awakens %s (%d still in queue)' %
                              (self._name, oldLockingAgent, newAgent, self._nEnqueued))
-            self._lockingAgentList.append(newAgent)
+            self._lockingAgentSet.add(newAgent)
             self._ownerLoop.sequencer.enqueue(newAgent, timeNow)
             self._ownerLoop.sequencer.enqueue(oldLockingAgent, timeNow)
             timeNow = self._ownerLoop.switch("%s and %s enqueued" % (newAgent, oldLockingAgent))
@@ -406,14 +412,21 @@ class MultiInteractant(Interactant):
         return timeNow
 
     def isLocked(self, agent):
-        return (agent in self._lockingAgentList or agent in self._lockQueue)
+        return (agent in self._lockingAgentSet or agent in self._lockQueue)
 
     def __str__(self):
-        return '<%s (%d of %d)>' % (self._name, len(self._lockingAgentList), self._nLocks)
+        return '<%s (%d of %d)>' % (self._name, len(self._lockingAgentSet), self._nLocks)
 
     @property
     def nFree(self):
-        return self._nLocks - len(self._lockingAgentList)
+        return self._nLocks - len(self._lockingAgentSet)
+
+    def getLiveLockedAgents(self):
+        return list(self._lockingAgentSet)
+
+    @property
+    def lockingAgentSet(self):
+        return self._lockingAgentSet
 
 
 def _clockAgentBreakHook(clockAgent):
@@ -460,7 +473,7 @@ class MainLoop(greenlet):
     def everyDayCB(loop, timeNow):
         loop.logger.debug('%s: time is now %s' % (loop.name, timeNow))
 
-    def __init__(self, name=None, safety=None):
+    def __init__(self, name=None, safety=None, checkpointer=None):
         self.newAgents = [MainLoop.ClockAgent(self)]
         self.perTickCallbacks = []
         self.perEventCallbacks = []
@@ -472,7 +485,7 @@ class MainLoop(greenlet):
             self.name = 'MainLoop'
         else:
             self.name = name
-        self.sequencer = Sequencer(self.name + ".Sequencer")
+        self.sequencer = Sequencer(self.name + ".Sequencer", checkpointer)
         self.dateFrozen = False
         self.counter = 0
         self.addPerDayCallback(MainLoop.everyDayCB)
