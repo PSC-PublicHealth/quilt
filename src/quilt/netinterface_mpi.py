@@ -20,14 +20,14 @@ _rhea_svn_id_ = "$Id$"
 from mpi4py import MPI
 import logging
 
+import netinterface_base as nib
+
 logger = logging.getLogger(__name__)
 
 
 def getCommWorld():
     """Provide easy access to the world to packages that don't want to know about MPI"""
     return MPI.COMM_WORLD
-
-
 
 
 class NetworkInterface(object):
@@ -40,7 +40,7 @@ class NetworkInterface(object):
 
     def __init__(self, comm, deterministic=False):
         self.comm = comm
-        self.vclock = VectorClock(self.comm.size, self.comm.rank)
+        self.vclock = nib.VectorClock(self.comm.size, self.comm.rank)
         self.outgoingDict = {}
         self.outstandingSendReqs = []
         self.outstandingRecvReqs = []
@@ -54,7 +54,7 @@ class NetworkInterface(object):
         self.doneMaxCycle = 0
 
     def getGblAddr(self, lclId):
-        return GblAddr(self.comm.rank, lclId)
+        return nib.GblAddr(self.comm.rank, lclId)
 
     def isLocal(self, gblAddr):
         return gblAddr.rank == self.comm.rank

@@ -39,6 +39,8 @@ class DummyComm(object):
         if root != 0:
             raise DummyCommException('There is no partner to share with')
         return data
+    def allgather(self, data):
+        return [data]
             
         
 def getCommWorld():
@@ -57,6 +59,7 @@ class NetworkInterface(object):
     def __init__(self, comm, deterministic=False):
         assert isinstance(comm, DummyComm), 'Tried to build a dummy netinterface with a real communicator?'
         self.comm = comm
+        self.vclock = nib.VectorClock(self.comm.size, self.comm.rank)
         self.outgoingList = []  # for messages to other addrs on this rank
         self.clientIncomingCallbacks = {}
         self.deterministic = deterministic
@@ -100,6 +103,7 @@ class NetworkInterface(object):
         self.clientIncomingCallbacks[(srcTag.lclId, destTag.lclId)](msgType, partTpl)
 
     def finishRecv(self):
+        self.vclock.incr()  # must happen before incoming messages arrive
         _logger.debug('%d local messages' % len(self.incomingLclMessages))
         for tpl in self.incomingLclMessages:
             self._innerRecv(tpl)
